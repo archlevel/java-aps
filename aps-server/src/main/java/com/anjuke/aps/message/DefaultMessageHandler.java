@@ -1,0 +1,75 @@
+package com.anjuke.aps.message;
+
+import java.util.Deque;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.anjuke.aps.message.protocol.ApsStatus;
+import com.anjuke.aps.message.protocol.Protocol;
+import com.anjuke.aps.message.protocol.ProtocolFactory;
+import com.anjuke.aps.message.protocol.Request;
+import com.anjuke.aps.message.protocol.Response;
+import com.anjuke.aps.message.serializer.MessagePackSerializer;
+import com.anjuke.aps.message.serializer.Serializer;
+import com.anjuke.aps.processor.DefaultProcessor;
+import com.anjuke.aps.processor.Processor;
+import com.anjuke.aps.utils.Asserts;
+
+public class DefaultMessageHandler implements MessageHandler {
+
+    private static final Logger LOG = LoggerFactory
+            .getLogger(DefaultMessageHandler.class);
+
+    private Serializer serializer = new MessagePackSerializer();
+    private Processor processor=new DefaultProcessor();
+
+    public Serializer getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(Serializer serializer) {
+        this.serializer = serializer;
+    }
+
+    public Processor getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
+    }
+
+    @Override
+    public void init() {
+        Asserts.notNull(serializer, "Serializer must not be null");
+        Asserts.notNull(processor, "Processor must not be null");
+    }
+
+    @Override
+    public void destory() {
+
+    }
+
+    @Override
+    public void handlerMessage(MessageChannel channel) {
+        Deque<byte[]> requestFrames = channel.receive();
+        Protocol protocol = ProtocolFactory.parseProtocol(requestFrames,
+                serializer);
+        Request request = protocol
+                .deserializeRequest(requestFrames, serializer);
+        Response response = protocol.prepareResponse(request);
+        try {
+            processor.process(request, response);
+        } catch (Exception e) {
+            response.setStatus(ApsStatus.INTENAL_SERVER_ERROR);
+            response.setErrorMessage(e.getMessage());
+            LOG.error(e.getMessage(), e);
+        }
+
+        Deque<byte[]> responseFrames = protocol.serializeResponse(response,
+                serializer);
+        channel.send(responseFrames);
+    }
+
+}
