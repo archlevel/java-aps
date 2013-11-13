@@ -23,6 +23,7 @@
     </parent>
     <modules>
         <module>aps-server</module>
+        <module>aps-core</module>
 	</modules>
     <dependencyManagement>
         <dependencies>

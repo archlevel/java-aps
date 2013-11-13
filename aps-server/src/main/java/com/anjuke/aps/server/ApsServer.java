@@ -44,6 +44,7 @@ public abstract class ApsServer implements RunnableComponent{
 
     private void init() {
         Asserts.notNull(messageHandler, "MessageHandler must not be null");
+        messageHandler.init();
         initialize(messageHandler);
     }
 
@@ -70,6 +71,7 @@ public abstract class ApsServer implements RunnableComponent{
         running = false;
         doStop();
         callAfterShutdownListerner();
+        messageHandler.destory();
         shutdownLatch.countDown();
     }
 

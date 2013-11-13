@@ -1,10 +1,9 @@
 package com.anjuke.aps.server;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.List;
 
 import org.junit.Test;
@@ -26,17 +25,21 @@ public class ApsServerTest {
     public void test() {
         List<Integer> list = new ArrayList<Integer>();
         MockApsServer server = new MockApsServer(list);
-        server.setMessageHandler(new MockMessageHandler());
+        MockMessageHandler handler = new MockMessageHandler();
+        server.setMessageHandler(handler);
         server.addServerStatusListener(new MockListener(list));
         server.start();
-
+        assertTrue(handler.isInit);
         assertEquals(Arrays.asList(0, 1, 2, 3), list);
-
         server.stop();
+        assertTrue(handler.isDestory);
         assertEquals(Arrays.asList(0, 1, 2, 3, 4, 5, 6), list);
     }
 
     private class MockMessageHandler implements MessageHandler {
+        boolean isInit;
+        boolean isDestory;
+
         @Override
         public void handlerMessage(MessageChannel channel) {
 
@@ -44,12 +47,12 @@ public class ApsServerTest {
 
         @Override
         public void init() {
-
+            isInit = true;
         }
 
         @Override
         public void destory() {
-
+            isDestory = true;
         }
 
     }
