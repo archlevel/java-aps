@@ -2,10 +2,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>aps-server</artifactId>
+    <artifactId>aps-server-spring</artifactId>
     <packaging>jar</packaging>
 
-    <name>ajf-server</name>
+    <name>ajf-server-spring</name>
     <parent>
         <groupId>com.anjuke.aps</groupId>
         <artifactId>aps-parent</artifactId>
@@ -14,18 +14,17 @@
     <dependencies>
         <dependency>
             <groupId>com.anjuke.aps</groupId>
-            <artifactId>aps-core</artifactId>
+            <artifactId>aps-server</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.zeromq</groupId>
-            <artifactId>jeromq</artifactId>
-            <version>0.3.1</version>
+            <groupId>com.anjuke.aps</groupId>
+            <artifactId>aps-spring-api</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.13</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
     </dependencies>

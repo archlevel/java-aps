@@ -1,9 +1,7 @@
 package com.anjuke.aps.kiteline.handler;
 
 import com.anjuke.aps.ApsStatus;
-import com.anjuke.aps.message.MessageChannel;
 import com.anjuke.aps.message.MessageFilter;
-import com.anjuke.aps.message.MessageHandler;
 import com.anjuke.aps.message.protocol.Request;
 import com.anjuke.aps.message.protocol.Response;
 
