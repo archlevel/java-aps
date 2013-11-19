@@ -1,6 +1,5 @@
 package com.anjuke.aps.server.spring;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -78,7 +77,7 @@ public class SpringRequestHandler implements RequestHandler {
                 }
                 String beanName = apsMethod.bean();
                 String methodName = apsMethod.method();
-                String url = contextName + "/" + beanName + "/" + methodName;
+                String url = contextName + "." + beanName + "." + methodName;
 
                 Object bean = applicationContext.getBean(beanName);
                 if (bean == null) {

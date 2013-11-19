@@ -1,8 +1,8 @@
 package com.anjuke.aps;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,34 +32,38 @@ public class ApsConfig {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void readConf(String confFile) throws IOException {
         InputStream is;
         if (confFile == null) {
             LOG.info("Load APS config from classpath:/aps.yaml");
             is = ApsConfig.class.getResourceAsStream("/aps.yaml");
         } else {
-            LOG.info("Load APS config from {}" +confFile);
-            is = new FileInputStream(confFile);
+            LOG.info("Load APS config from {}", confFile);
+            is = new URL(confFile).openStream();
         }
-        Yaml yaml=new Yaml();
-        Map<String, Object> conf=(Map<String, Object>) yaml.load(is);
+        Yaml yaml = new Yaml();
+        Map<String, Object> conf = (Map<String, Object>) yaml.load(is);
         confMap.putAll(conf);
-        LOG.debug("Config content: {}",conf);
+        LOG.debug("Config content: {}", conf);
+        is.close();
     }
 
     public static ApsConfig getInstance() {
         return INSTANCE;
     }
 
-    public int getPort(){
-        return ((Number)confMap.get("aps.zmq.server.port")).intValue();
+    public int getPort() {
+        return ((Number) confMap.get("aps.zmq.server.port")).intValue();
     }
 
-    public List<RequestHandler> getRequestHandler(){
+    @SuppressWarnings("unchecked")
+    public List<RequestHandler> getRequestHandler() {
         return (List<RequestHandler>) confMap.get("aps.server.request.handler");
     }
 
-    public List<MessageFilter> getMessageFilter(){
+    @SuppressWarnings("unchecked")
+    public List<MessageFilter> getMessageFilter() {
         return (List<MessageFilter>) confMap.get("aps.server.message.filter");
     }
 

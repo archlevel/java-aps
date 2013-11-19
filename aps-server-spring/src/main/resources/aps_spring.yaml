@@ -1,0 +1,22 @@
+
+kiteline:
+  - &pingRequestHandler !!com.anjuke.aps.kiteline.handler.PingRequestHandler []
+  - &statusContext !!com.anjuke.aps.kiteline.handler.StatusContext []
+  - &statusRequestHandler !!com.anjuke.aps.kiteline.handler.StatusRequestHandler { "context":*statusContext }
+  - &statusMessageFilter !!com.anjuke.aps.kiteline.handler.StatusMessageFilter { "context":*statusContext }
+
+aps.zmq.server.port: 8964
+
+
+aps.server.status.listener: []
+
+
+aps.server.request.handler:
+  - *pingRequestHandler
+  - *statusRequestHandler
+  - !!com.anjuke.aps.server.spring.SpringRequestHandler []
+
+
+aps.server.message.filter:
+  - !!com.anjuke.aps.server.processor.AccessLogRequestFilter []
+  - *statusMessageFilter
