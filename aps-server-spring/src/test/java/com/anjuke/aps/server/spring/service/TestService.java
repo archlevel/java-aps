@@ -11,4 +11,8 @@ public class TestService {
     public  Map<String,Object> echoMap(Map<String,Object> message){
         return message;
     }
+
+    public TestBean echoBean(TestBean bean){
+        return bean;
+    }
 }

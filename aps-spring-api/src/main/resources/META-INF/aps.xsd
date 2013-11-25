@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://blog.csdn.net/cutesource/schema/people"
+<xsd:schema
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
     targetNamespace="http://schema.corp.anjuke.com/ajf/aps"
     elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xsd:import namespace="http://www.springframework.org/schema/beans"
-        schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.2.xsd" />
+        schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
     <xsd:element name="service">
         <xsd:complexType>
             <xsd:attribute name="id" type="xsd:ID">
