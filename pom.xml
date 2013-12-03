@@ -189,14 +189,12 @@
     <distributionManagement>
         <repository>
             <id>xinfang-releases</id>
-            <uniqueVersion>false</uniqueVersion>
-            <name>Aifang Release Repository</name>
+            <name>Anjuke Inc. Release Repository</name>
             <url>ftp://www@maven.corp.anjuke.com/home/maven/xinfang-releases</url>
         </repository>
         <snapshotRepository>
             <id>xinfang-snapshots</id>
-            <uniqueVersion>true</uniqueVersion>
-            <name>Aifang Snapshot Repository</name>
+            <name>Anjuke Inc. Snapshot Repository</name>
             <url>ftp://www@maven.corp.anjuke.com/home/maven/xinfang-snapshots</url>
         </snapshotRepository>
     </distributionManagement>

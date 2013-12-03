@@ -202,16 +202,17 @@ class APS12Protocol implements Protocol {
 
                         String key = String.valueOf(extraList.get(0));
                         int size = extraList.size();
-                        Object value;
                         if (size == 1) {
-                            value = null;
+                            Object value = null;
+                            extraMap.put(key, value);
                         } else if (size == 2) {
-                            value = extraList.get(1);
+                            Object value = extraList.get(1);
+                            extraMap.put(key, value);
                         } else {
-                            value = extraList.subList(1, size);
+                            List<Object> value = extraList.subList(1, size);
+                            extraMap.putAll(key, value);
                         }
 
-                        extraMap.put(key, value);
 
                     } else {
                         LOG.warn("Extra frame not a Array, Dropped. Value is "
