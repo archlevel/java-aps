@@ -60,7 +60,6 @@ public class DefaultRequestProcessor implements RequestProcessor {
 
     @Override
     public void process(Request request, Response response) {
-        long startTime = System.currentTimeMillis();
         RequestHandler handler = methodMapping.get(request.getRequestMethod());
         if (handler == null) {
             response.setStatus(ApsStatus.METHOD_NOT_FOUND);
@@ -71,9 +70,7 @@ public class DefaultRequestProcessor implements RequestProcessor {
 
         handler.handle(request, response);
 
-
-        long endTime = System.currentTimeMillis();
-        response.setResponseTimestamp(endTime - startTime);
+        response.setResponseTimestamp(System.currentTimeMillis());
     }
 
     @Override

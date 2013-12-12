@@ -1,4 +1,4 @@
-package com.anjuke.aps.zmq;
+package com.anjuke.aps.server.zmq;
 
 import com.anjuke.aps.ApsConfig;
 import com.anjuke.aps.message.MessageFilter;

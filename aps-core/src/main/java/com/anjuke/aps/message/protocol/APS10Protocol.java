@@ -1,5 +1,7 @@
 package com.anjuke.aps.message.protocol;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 
@@ -11,7 +13,22 @@ class APS10Protocol implements Protocol {
 
     private static final APS10RequestBuilder requestBuilder = new APS10RequestBuilder();
 
+    private static final APS10ResponseBuilder responseBuilder = new APS10ResponseBuilder();
     private static final APS10ResponseSerializer responseSerializer = new APS10ResponseSerializer();
+
+    @Override
+    public Deque<byte[]> serializeRequest(Request request, Serializer serializer) {
+        return null;
+    }
+
+    @Override
+    public Request prepareRequest(long sequence, String requestMethod,
+            int expire, Object... params) {
+        APS10Request request = new APS10Request(sequence,
+                System.currentTimeMillis(), (int) expire, requestMethod,
+                Arrays.asList(params));
+        return request;
+    }
 
     @Override
     public Request deserializeRequest(Deque<byte[]> frame, Serializer serializer) {
@@ -27,6 +44,12 @@ class APS10Protocol implements Protocol {
     public Deque<byte[]> serializeResponse(Response response,
             Serializer serializer) {
         return responseSerializer.serializeResponse(response, serializer);
+    }
+
+    @Override
+    public Response deserializeResponse(Deque<byte[]> frame,
+            Serializer serializer) {
+        return responseBuilder.buildResponse(frame, serializer);
     }
 
     static class APS10Response implements Response {
@@ -111,8 +134,8 @@ class APS10Protocol implements Protocol {
         private final String requestMethod;
         private final List<Object> requestParams;
 
-        private APS10Request(long sequence, long requestTimestamp,
-                int expiry, String requestMethod, List<Object> requestParams) {
+        private APS10Request(long sequence, long requestTimestamp, int expiry,
+                String requestMethod, List<Object> requestParams) {
             this.sequence = sequence;
             this.requestTimestamp = requestTimestamp;
             this.expiry = expiry;
@@ -151,7 +174,7 @@ class APS10Protocol implements Protocol {
         }
 
         @Override
-        public Object getExtra(String key) {
+        public Collection<Object> getExtra(String key) {
             return null;
         }
 
@@ -165,6 +188,11 @@ class APS10Protocol implements Protocol {
             return ImmutableMultimap.of();
         }
 
+        @Override
+        public void setExtra(String key, Object value) {
+
+        }
+
     }
 
     static class APS10RequestBuilder extends AbstractRequestBuilder {
@@ -173,8 +201,38 @@ class APS10Protocol implements Protocol {
                 String requestMethod, List<Object> params,
                 Deque<byte[]> frames, Serializer serializer) {
 
-            return new APS10Request(sequence,(long) timestamp, (int)expire, requestMethod,
-                    params);
+            return new APS10Request(sequence, (long) timestamp, (int) expire,
+                    requestMethod, params);
+        }
+    }
+
+    static class APS10RequestSerialzer extends AbstractRequestSerializer {
+        @Override
+        Deque<byte[]> appendFrames(Request request, Serializer serializer,
+                Deque<byte[]> frames) {
+            return frames;
+        }
+
+        @Override
+        Object getTimestamp(long timestamp) {
+            return timestamp;
+        }
+    }
+
+    static class APS10ResponseBuilder extends AbstractResponseBuilder {
+
+        @Override
+        Response createResponse(long sequence, double timestamp, int status,
+                Object result, Deque<byte[]> frames, Serializer serializer) {
+            APS10Response response = new APS10Response(sequence);
+            response.setResponseTimestamp((long) timestamp);
+            response.setStatus(status);
+            response.setResult(result);
+            if (!frames.isEmpty()) {
+                String errorMessage = new String(frames.poll());
+                response.setErrorMessage(errorMessage);
+            }
+            return response;
         }
     }
 
@@ -194,4 +252,5 @@ class APS10Protocol implements Protocol {
             return timestamp;
         }
     }
+
 }

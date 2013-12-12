@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.message.serializer.Serializer;
-import com.anjuke.aps.utils.Asserts;
+import com.anjuke.aps.util.Asserts;
 
 abstract class AbstractResponseSerializer implements ResponseSerializer {
     @Override
@@ -26,6 +26,8 @@ abstract class AbstractResponseSerializer implements ResponseSerializer {
             Object result = response.getResult();
             Asserts.allowedType(result);
             frames.offer(serializer.writeValue(result));
+        } else {
+            frames.offer(serializer.writeValue(null));
         }
         return appendFrames(response, serializer, frames);
     }

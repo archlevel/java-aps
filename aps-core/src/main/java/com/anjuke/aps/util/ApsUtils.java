@@ -1,4 +1,4 @@
-package com.anjuke.aps.utils;
+package com.anjuke.aps.util;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -60,8 +60,5 @@ public abstract class ApsUtils {
                 t.setPriority(Thread.NORM_PRIORITY);
             return t;
         }
-    }
-    public static void main(String[] args) {
-        System.out.println(ManagementFactory.getRuntimeMXBean().getName());
     }
 }

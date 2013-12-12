@@ -20,7 +20,7 @@ import com.anjuke.aps.message.protocol.Response;
 import com.anjuke.aps.message.serializer.MessagePackSerializer;
 import com.anjuke.aps.message.serializer.Serializer;
 import com.anjuke.aps.server.processor.RequestProcessor;
-import com.anjuke.aps.utils.Asserts;
+import com.anjuke.aps.util.Asserts;
 
 public class DefaultMessageHandler implements MessageHandler {
 

@@ -1,5 +1,6 @@
 package com.anjuke.aps.message.protocol;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Multimap;
@@ -26,10 +27,13 @@ public interface Request {
 
     List<Object> getRequestParams();
 
-    Object getExtra(String key);
+    void setExtra(String key, Object value);
+
+    Collection<Object> getExtra(String key);
 
     boolean hasExtra(String key);
 
     Multimap<String, Object> getExtraMap();
+
 
 }

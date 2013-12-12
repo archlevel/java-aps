@@ -2,10 +2,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>aps-core</artifactId>
+    <artifactId>aps-zmq</artifactId>
     <packaging>jar</packaging>
 
-    <name>aps-core</name>
+    <name>aps-zmq</name>
     <parent>
         <groupId>com.anjuke.aps</groupId>
         <artifactId>aps-parent</artifactId>
@@ -13,20 +13,9 @@
     </parent>
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.msgpack</groupId>
-            <artifactId>msgpack</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>com.anjuke.aps</groupId>
+            <artifactId>aps-core</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.zeromq</groupId>

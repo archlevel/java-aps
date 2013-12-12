@@ -1,4 +1,4 @@
-package com.anjuke.aps.zmq;
+package com.anjuke.aps.server.zmq;
 
 import java.util.Arrays;
 import java.util.Deque;
@@ -8,6 +8,8 @@ import java.util.List;
 import org.zeromq.ZMQ;
 
 import com.anjuke.aps.message.MessageChannel;
+import com.anjuke.aps.zmq.ZMQUtils;
+import com.anjuke.aps.zmq.ZMQWorkerSocketPool;
 import com.google.common.collect.Iterables;
 
 class ZMQMessageChannel implements MessageChannel {
@@ -40,17 +42,7 @@ class ZMQMessageChannel implements MessageChannel {
     }
 
     private List<byte[]> parseEnvelop(Deque<byte[]> frames) {
-        List<byte[]> envelop = new LinkedList<byte[]>();
-        byte[] frame = frames.poll();
-        while (frame != null && !Arrays.equals(EMPTY_FRAME, frame)) {
-            envelop.add(frame);
-            frame = frames.poll();
-        }
-        if (frame == null) {
-            throw new IllegalStateException("envelop parse error");
-        }
-        envelop.add(frame);
-        return envelop;
+        return ZMQUtils.popEnvelop(frames);
 
     }
 

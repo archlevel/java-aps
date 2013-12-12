@@ -9,8 +9,8 @@ import com.anjuke.aps.message.serializer.Serializer;
 
 public class ProtocolFactory {
 
-    static final String APS_10_VERSION = "APS10";
-    static final String APS_12_VERSION = "APS12";
+    public static final String APS_10_VERSION = "APS10";
+    public static final String APS_12_VERSION = "APS12";
 
     private final static Map<String, Protocol> protocolMapping;
 
@@ -20,15 +20,23 @@ public class ProtocolFactory {
         protocolMapping.put(APS_12_VERSION, new APS12Protocol());
     }
 
-    public static Protocol parseProtocol(Deque<byte[]> frames,
-            Serializer serializer) {
-        byte[] versionFrame = frames.pollFirst();
-        String version = new String(versionFrame);
+    // public static Protocol defaultProtocol() {
+    // return protocolMapping.get(APS_12_VERSION);
+    // }
+
+    public static Protocol getProtocol(String version) {
         Protocol protocol = protocolMapping.get(version);
         if (protocol == null) {
             throw new UnknownProtocolException("Unknown APS Version " + version);
         } else {
             return protocol;
         }
+    }
+
+    public static Protocol parseProtocol(Deque<byte[]> frames,
+            Serializer serializer) {
+        byte[] versionFrame = frames.pollFirst();
+        String version = new String(versionFrame);
+        return getProtocol(version);
     }
 }

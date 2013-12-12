@@ -7,7 +7,7 @@ import java.util.concurrent.CountDownLatch;
 
 import com.anjuke.aps.RunnableComponent;
 import com.anjuke.aps.message.MessageHandler;
-import com.anjuke.aps.utils.Asserts;
+import com.anjuke.aps.util.Asserts;
 
 public abstract class ApsServer implements RunnableComponent{
     private volatile boolean running;

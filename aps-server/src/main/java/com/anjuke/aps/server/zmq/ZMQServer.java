@@ -1,18 +1,22 @@
-package com.anjuke.aps.zmq;
+package com.anjuke.aps.server.zmq;
 
 import java.util.Deque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.zeromq.ZMQ;
-import org.zeromq.ZMQException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zeromq.ZMQ;
+import org.zeromq.ZMQ.Socket;
+import org.zeromq.ZMQException;
 
 import com.anjuke.aps.message.MessageHandler;
 import com.anjuke.aps.server.ApsServer;
-import com.anjuke.aps.utils.ApsUtils;
+import com.anjuke.aps.util.ApsUtils;
+import com.anjuke.aps.zmq.ZMQPollerRunner;
+import com.anjuke.aps.zmq.ZMQUtils;
+import com.anjuke.aps.zmq.ZMQWorkerSocketPool;
 
 public class ZMQServer extends ApsServer {
 
@@ -121,44 +125,28 @@ public class ZMQServer extends ApsServer {
         workerSocket.close();
     }
 
-    private class PollerRunner implements Runnable {
+    private class PollerRunner extends ZMQPollerRunner {
+
+        public PollerRunner() {
+            super(serviceSocket, workerSocket);
+        }
 
         @Override
-        public void run() {
-            ZMQ.Poller poller = new ZMQ.Poller(2);
-            poller.register(serviceSocket, ZMQ.Poller.POLLIN);
-            poller.register(workerSocket, ZMQ.Poller.POLLIN);
-            long waitTime = 1000;
-            while (isRunning() && !Thread.currentThread().isInterrupted()) {
-                try {
-                    // wait while there are either requests or replies to
-                    // process
-                    if (poller.poll(waitTime) < 1) {
-                        continue;
-                    }
+        protected boolean isRunning() {
+            return ZMQServer.this.isRunning();
+        }
 
-                    if (poller.pollin(0)) {
-                        Deque<byte[]> frames = ZMQUtils
-                                .receiveMessage(serviceSocket);
-                        messageHandler.handlerMessage(new ZMQMessageChannel(frames,
-                                workerSocketPool));
-                    }
+        @Override
+        protected void handlerFrontIn(Socket frontSocket, Socket backendSocket) {
+            Deque<byte[]> frames = ZMQUtils.receiveMessage(frontSocket);
+            messageHandler.handlerMessage(new ZMQMessageChannel(frames,
+                    workerSocketPool));
+        }
 
-                    // process a reply
-                    if (poller.pollin(1)) {
-                        ZMQUtils.forwardMessage(workerSocket, serviceSocket);
-                    }
-                } catch (ZMQException e) {
-                    // context destroyed, exit
-                    if (ZMQ.Error.ETERM.getCode() == e.getErrorCode()) {
-                        break;
-                    }
-                    LOG.error(e.getMessage(), e);
-                    throw e;
-                } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
-                }
-            }
+        @Override
+        protected void handlerBackendIn(Socket frontSocket, Socket backendSocket) {
+            ZMQUtils.forwardMessage(backendSocket, frontSocket);
+
         }
 
     }

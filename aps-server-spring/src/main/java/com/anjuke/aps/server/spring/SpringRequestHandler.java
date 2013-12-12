@@ -19,7 +19,7 @@ import com.anjuke.aps.server.processor.RequestHandler;
 import com.anjuke.aps.spring.ApsMethod;
 import com.anjuke.aps.spring.ApsModule;
 import com.anjuke.aps.spring.config.ApsServiceInstance;
-import com.anjuke.aps.utils.Asserts;
+import com.anjuke.aps.util.Asserts;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;

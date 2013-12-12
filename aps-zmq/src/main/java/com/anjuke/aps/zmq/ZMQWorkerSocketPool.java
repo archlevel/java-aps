@@ -21,7 +21,7 @@ public class ZMQWorkerSocketPool {
 
     private final String endpoint;
 
-    ZMQWorkerSocketPool(Context context, String endpoint) {
+    public ZMQWorkerSocketPool(Context context, String endpoint) {
         super();
         this.context = context;
         this.endpoint = endpoint;

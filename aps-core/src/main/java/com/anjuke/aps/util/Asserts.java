@@ -1,4 +1,4 @@
-package com.anjuke.aps.utils;
+package com.anjuke.aps.util;
 
 import java.util.Collection;
 import java.util.Map;

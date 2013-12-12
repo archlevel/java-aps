@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.anjuke.aps.ExtraMessage;
 import com.anjuke.aps.message.serializer.Serializer;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
@@ -18,7 +19,31 @@ class APS12Protocol implements Protocol {
     private static final Logger LOG = LoggerFactory
             .getLogger(APS12Protocol.class);
     private static final APS12RequestBuilder requestBuilder = new APS12RequestBuilder();
+
+    private static final APS12RequestSerializer requestSerializer = new APS12RequestSerializer();
+
+    private static final APS12ResponseBuilder responseBuilder = new APS12ResponseBuilder();
     private static final APS12ResponseSerializer responseSerializer = new APS12ResponseSerializer();
+
+    @Override
+    public Deque<byte[]> serializeRequest(Request request, Serializer serializer) {
+        return requestSerializer.serializeRequest(request, serializer);
+    }
+
+    @Override
+    public Response deserializeResponse(Deque<byte[]> frame,
+            Serializer serializer) {
+        return responseBuilder.buildResponse(frame, serializer);
+    }
+
+    @Override
+    public Request prepareRequest(long sequence, String requestMethod,
+            int expire, Object... params) {
+
+        return new APS12Request(sequence, System.currentTimeMillis(), expire,
+                requestMethod, Arrays.asList(params),
+                ArrayListMultimap.<String, Object> create());
+    }
 
     @Override
     public Request deserializeRequest(Deque<byte[]> frame, Serializer serializer) {
@@ -41,7 +66,6 @@ class APS12Protocol implements Protocol {
         private long responseTimestamp;
         private int status = 200;
         private Object result;
-        private String errorMessage;
 
         private Multimap<String, Object> extraMap = ArrayListMultimap.create();
 
@@ -93,12 +117,17 @@ class APS12Protocol implements Protocol {
 
         @Override
         public String getErrorMessage() {
-            return errorMessage;
+            Collection<Object> msg=extraMap.get(ExtraMessage.ERROR_MESSAGE);
+            if(msg==null||msg.isEmpty()){
+                return null;
+            }else{
+                return Arrays.toString(msg.toArray());
+            }
         }
 
         @Override
         public void setErrorMessage(String message) {
-            this.errorMessage = message;
+             this.extraMap.put(ExtraMessage.ERROR_MESSAGE, message);
         }
 
         @Override
@@ -164,7 +193,7 @@ class APS12Protocol implements Protocol {
         }
 
         @Override
-        public Object getExtra(String key) {
+        public Collection<Object> getExtra(String key) {
             return extraMap.get(key);
         }
 
@@ -179,6 +208,12 @@ class APS12Protocol implements Protocol {
             return extraMap;
         }
 
+        @Override
+        public void setExtra(String key, Object value) {
+            extraMap.put(key, value);
+
+        }
+
     }
 
     static class APS12RequestBuilder extends AbstractRequestBuilder {
@@ -187,45 +222,24 @@ class APS12Protocol implements Protocol {
                 String requestMethod, List<Object> params,
                 Deque<byte[]> frames, Serializer serializer) {
             Multimap<String, Object> extraMap = ArrayListMultimap.create();
-            for (byte[] extra : frames) {
-                try {
-                    Object extraData = serializer.readValue(extra);
-                    if (extraData == null) {
-                        continue;
-                    }
-                    if (extraData instanceof List<?>) {
-                        @SuppressWarnings("unchecked")
-                        List<Object> extraList = (List<Object>) extraData;
-                        if (extraList.isEmpty()) {
-                            continue;
-                        }
-
-                        String key = String.valueOf(extraList.get(0));
-                        int size = extraList.size();
-                        if (size == 1) {
-                            Object value = null;
-                            extraMap.put(key, value);
-                        } else if (size == 2) {
-                            Object value = extraList.get(1);
-                            extraMap.put(key, value);
-                        } else {
-                            List<Object> value = extraList.subList(1, size);
-                            extraMap.putAll(key, value);
-                        }
-
-
-                    } else {
-                        LOG.warn("Extra frame not a Array, Dropped. Value is "
-                                + extraData);
-
-                    }
-                } catch (Exception e) {
-                    LOG.warn("Unkown extra frame, dropped", e);
-                }
-            }
-
+            ProtocolUtils.parseExtraFrames(extraMap, frames, serializer);
             return new APS12Request(sequence, (long) (timestamp * 1000),
                     (int) (expire * 1000), requestMethod, params, extraMap);
+        }
+    }
+
+    static class APS12RequestSerializer extends AbstractRequestSerializer {
+
+        @Override
+        Deque<byte[]> appendFrames(Request request, Serializer serializer,
+                Deque<byte[]> frames) {
+            Multimap<String, Object> map = request.getExtraMap();
+            return ProtocolUtils.appendExtraFrames(map, frames, serializer);
+        }
+
+        @Override
+        Object getTimestamp(long timestamp) {
+            return timestamp / 1000.0;
         }
     }
 
@@ -233,28 +247,26 @@ class APS12Protocol implements Protocol {
         @Override
         Deque<byte[]> appendFrames(Response response, Serializer serializer,
                 Deque<byte[]> frames) {
-            String errorMessage = response.getErrorMessage();
-            if (errorMessage != null) {
-                frames.offer(serializer.writeValue(Arrays.asList("errorMsg",
-                        errorMessage)));
-            }
             Multimap<String, Object> map = response.getExtraMap();
-            for (String key : map.keySet()) {
-                List<Object> extra = Lists.newArrayListWithCapacity(3);
-                extra.add(key);
-                Collection<Object> value = map.get(key);
-                extra.addAll(value);
-
-                byte[] data = serializer.writeValue(extra);
-                frames.offer(data);
-            }
-
-            return frames;
+            return ProtocolUtils.appendExtraFrames(map, frames, serializer);
         }
 
         @Override
         Object getTimestamp(long timestamp) {
             return timestamp / 1000.0;
+        }
+    }
+
+    static class APS12ResponseBuilder extends AbstractResponseBuilder {
+        @Override
+        Response createResponse(long sequence, double timestamp, int status,
+                Object result, Deque<byte[]> frames, Serializer serializer) {
+            APS12Response response = new APS12Response(sequence);
+            response.setResponseTimestamp((long) (timestamp * 1000));
+            response.setStatus(status);
+            response.setResult(result);
+            ProtocolUtils.parseExtraFrames(response.extraMap, frames, serializer);
+            return response;
         }
     }
 }

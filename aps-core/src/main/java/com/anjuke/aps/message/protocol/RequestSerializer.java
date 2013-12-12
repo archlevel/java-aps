@@ -4,8 +4,7 @@ import java.util.Deque;
 
 import com.anjuke.aps.message.serializer.Serializer;
 
-interface ResponseSerializer {
-
-    public Deque<byte[]> serializeResponse(Response response,
+interface RequestSerializer {
+    public Deque<byte[]> serializeRequest(Request request,
             Serializer serializer);
 }
