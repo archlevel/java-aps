@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 
+import com.anjuke.aps.Request;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.message.serializer.Serializer;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;

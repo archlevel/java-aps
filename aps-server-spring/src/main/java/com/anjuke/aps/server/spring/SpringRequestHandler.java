@@ -8,14 +8,18 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.access.BeanFactoryLocator;
+import org.springframework.beans.factory.access.BeanFactoryReference;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.access.ContextSingletonBeanFactoryLocator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
 import com.anjuke.aps.ApsStatus;
+import com.anjuke.aps.Request;
+import com.anjuke.aps.RequestHandler;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.exception.ApsException;
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
-import com.anjuke.aps.server.processor.RequestHandler;
 import com.anjuke.aps.spring.ApsMethod;
 import com.anjuke.aps.spring.ApsModule;
 import com.anjuke.aps.spring.config.ApsServiceInstance;
@@ -25,6 +29,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class SpringRequestHandler implements RequestHandler {
 
@@ -32,11 +37,25 @@ public class SpringRequestHandler implements RequestHandler {
             .getLogger(SpringRequestHandler.class);
     private String contextLocation = "classpath*:applicationContext.xml";
 
+    private String parentContextKey;
+
     private ClassPathXmlApplicationContext applicationContext;
 
     private ObjectMapper objectMapper;
 
     private Map<String, ApsMethodInvoker> methodBeanCache;
+
+    private Set<String> modules=Sets.newHashSet();
+
+    private BeanFactoryReference parentReference;
+
+    public String getParentContextKey() {
+        return parentContextKey;
+    }
+
+    public void setParentContextKey(String parentContextKey) {
+        this.parentContextKey = parentContextKey;
+    }
 
     public String getContextLocation() {
         return contextLocation;
@@ -50,7 +69,21 @@ public class SpringRequestHandler implements RequestHandler {
     public void init() {
         Asserts.notNull(contextLocation,
                 "Spring context file location not be null");
-        applicationContext = new ClassPathXmlApplicationContext(contextLocation);
+
+        if (parentContextKey != null && !parentContextKey.isEmpty()) {
+            BeanFactoryLocator locator = ContextSingletonBeanFactoryLocator
+                    .getInstance();
+
+            parentReference = locator.useBeanFactory(parentContextKey);
+            ApplicationContext parentContext = (ApplicationContext) parentReference
+                    .getFactory();
+
+            applicationContext = new ClassPathXmlApplicationContext(
+                    new String[] { contextLocation }, parentContext);
+        } else {
+            applicationContext = new ClassPathXmlApplicationContext(
+                    contextLocation);
+        }
         objectMapper = new ObjectMapper();
         objectMapper.configure(
                 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -68,7 +101,6 @@ public class SpringRequestHandler implements RequestHandler {
                 continue;
             }
             String contextName = moduleAnnotation.name();
-
             Method[] methodArray = clazz.getDeclaredMethods();
             for (Method method : methodArray) {
                 ApsMethod apsMethod = method.getAnnotation(ApsMethod.class);
@@ -108,6 +140,7 @@ public class SpringRequestHandler implements RequestHandler {
                     throw new ApsException(msg, e);
                 }
             }
+            modules.add(contextName);
         }
     }
 
@@ -117,9 +150,14 @@ public class SpringRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void destory() {
+    public void destroy() {
         methodBeanCache.clear();
         applicationContext.close();
+    }
+
+    @Override
+    public Set<String> getModules() {
+        return modules;
     }
 
     public void handle(Request request, Response response) {
@@ -135,7 +173,7 @@ public class SpringRequestHandler implements RequestHandler {
                 invoker.getGenericParameterTypes());
         try {
             Object result = invoker.invoke(convertedParams);
-            response.setResult(result);
+            response.setResult(objectMapper.convertValue(result,Object.class));
             response.setStatus(ApsStatus.SUCCESS);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

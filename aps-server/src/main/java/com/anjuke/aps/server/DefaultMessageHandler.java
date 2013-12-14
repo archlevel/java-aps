@@ -9,14 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anjuke.aps.ApsStatus;
+import com.anjuke.aps.Request;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.exception.ApsException;
 import com.anjuke.aps.message.MessageChannel;
 import com.anjuke.aps.message.MessageFilter;
 import com.anjuke.aps.message.MessageHandler;
 import com.anjuke.aps.message.protocol.Protocol;
 import com.anjuke.aps.message.protocol.ProtocolFactory;
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
 import com.anjuke.aps.message.serializer.MessagePackSerializer;
 import com.anjuke.aps.message.serializer.Serializer;
 import com.anjuke.aps.server.processor.RequestProcessor;
@@ -67,11 +67,11 @@ public class DefaultMessageHandler implements MessageHandler {
     }
 
     @Override
-    public void destory() {
-        processor.destory();
+    public void destroy() {
+        processor.destroy();
         for (MessageFilter filter : filterList) {
             try {
-                filter.destory();
+                filter.destroy();
             } catch (Exception e) {
                 LOG.warn("Filter " + filter + " destory error", e);
             }

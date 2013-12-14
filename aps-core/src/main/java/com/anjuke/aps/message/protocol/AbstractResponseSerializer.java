@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.anjuke.aps.ApsStatus;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.message.serializer.Serializer;
 import com.anjuke.aps.util.Asserts;
 

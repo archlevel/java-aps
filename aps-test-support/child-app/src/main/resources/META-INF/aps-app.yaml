@@ -1,0 +1,6 @@
+
+aps.request.handler: !!com.anjuke.aps.server.spring.SpringRequestHandler {
+    "contextLocation":"classpath*:applicationContext.xml",
+    "parentContextKey":"parentContext"
+  }
+

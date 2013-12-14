@@ -4,9 +4,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
-
 public interface ApsClient {
 
     /**
@@ -14,9 +11,10 @@ public interface ApsClient {
      * @param url
      * @param timeoutMilliseconds
      * @param args 只接收 number, string, map, collection type
-     * @return
+     * @return request result
      * @throws TimeoutException
      * @throws InterruptedException
+     * @throws ExecutionException
      */
     public Object request(String url, int timeoutMilliseconds, Object... args)
             throws TimeoutException, InterruptedException,ExecutionException;

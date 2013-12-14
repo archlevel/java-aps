@@ -5,6 +5,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.anjuke.aps.Request;
 import com.anjuke.aps.message.serializer.Serializer;
 import com.google.common.collect.Lists;
 

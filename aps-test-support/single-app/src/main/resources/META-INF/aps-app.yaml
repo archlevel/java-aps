@@ -1,0 +1,3 @@
+
+aps.request.handler: !!com.anjuke.test.single.EchoRequestHandler []
+

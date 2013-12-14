@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
+import com.anjuke.aps.Request;
 import com.anjuke.aps.exception.UnknownProtocolException;
 import com.anjuke.aps.message.serializer.Serializer;
 

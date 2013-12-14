@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
-import org.zeromq.ZMQException;
 
 import com.anjuke.aps.message.MessageHandler;
 import com.anjuke.aps.server.ApsServer;
@@ -91,7 +90,7 @@ public class ZMQServer extends ApsServer {
     private void bindSocket() {
         context = ZMQ.context(1);
         serviceSocket = context.socket(ZMQ.ROUTER);
-        String identity = hostname + ":" + port;
+        String identity ="tcp://"+hostname + ":" + port;
         String endpoint = "tcp://*:" + port;
         serviceSocket.setIdentity(identity.getBytes());
         serviceSocket.setLinger(zmqLinger);

@@ -17,10 +17,5 @@
             <artifactId>aps-core</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.anjuke.aps</groupId>
-            <artifactId>aps-zmq</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 </project>

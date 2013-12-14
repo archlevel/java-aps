@@ -4,5 +4,5 @@ public interface LifeCycle {
 
     public void init();
 
-    public void destory();
+    public void destroy();
 }

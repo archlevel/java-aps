@@ -1,8 +1,8 @@
 package com.anjuke.aps.message;
 
 import com.anjuke.aps.LifeCycle;
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
+import com.anjuke.aps.Request;
+import com.anjuke.aps.Response;
 
 public interface MessageFilter extends LifeCycle {
 

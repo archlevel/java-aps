@@ -15,7 +15,7 @@ aps.server.request.handler:
   - *pingRequestHandler
   - *statusRequestHandler
   - !!com.anjuke.aps.server.spring.SpringRequestHandler {
-    "contextLocation":"classpath*:applicationContext.xml"
+    "contextLocation":"classpath*:testApplicationContext.xml"
   }
 
 

@@ -1,4 +1,0 @@
-
-
-context:
-  - &bean !!com.anjuke.aps.TestBean [ "abc" ]

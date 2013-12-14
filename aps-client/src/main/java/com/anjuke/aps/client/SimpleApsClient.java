@@ -6,9 +6,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.anjuke.aps.ExtraMessage;
+import com.anjuke.aps.Request;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.message.protocol.Protocol;
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
 import com.anjuke.aps.util.ApsUtils;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;

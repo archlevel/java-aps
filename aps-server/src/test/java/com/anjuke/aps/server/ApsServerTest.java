@@ -51,7 +51,7 @@ public class ApsServerTest {
         }
 
         @Override
-        public void destory() {
+        public void destroy() {
             isDestory = true;
         }
 

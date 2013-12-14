@@ -3,6 +3,7 @@ package com.anjuke.aps.message.protocol;
 import java.util.Deque;
 import java.util.List;
 
+import com.anjuke.aps.Response;
 import com.anjuke.aps.exception.UnknownProtocolException;
 import com.anjuke.aps.message.serializer.Serializer;
 
