@@ -10,10 +10,12 @@
      ">
 
     <context:annotation-config />
-    <bean id="childBeanInject" class="com.anjuke.test.child.ChildBeanInject" lazy-init="false"></bean>
-    <bean id="childBeanXmlConf" class="com.anjuke.test.child.ChildBeanXmlConf" lazy-init="false">
+    <bean id="childBeanXmlConf" class="com.anjuke.test.child.another.ChildBeanXmlConf"
+        lazy-init="false">
         <property name="parent" ref="parentBean" />
     </bean>
+    <bean id="childBeanInject" class="com.anjuke.test.child.another.ChildBeanInject"
+        lazy-init="false"></bean>
 
 </beans>
 

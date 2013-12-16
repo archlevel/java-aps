@@ -15,6 +15,7 @@
         <module>parent-lib</module>
         <module>child-app</module>
         <module>single-app</module>
+        <module>child-another</module>
     </modules>
     
 </project>

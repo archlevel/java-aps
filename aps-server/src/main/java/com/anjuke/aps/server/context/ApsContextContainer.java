@@ -31,7 +31,7 @@ public class ApsContextContainer implements RequestHandler {
 
     private String appPathRoot = ApsConfig.getApsHome() + "/temp";
 
-    private String appConfigFilePath = "META-INF/aps-app.yaml";
+    private String appConfigFilePath = "META-INF/aps/aps-app.yaml";
 
     private URLClassLoader contextClassLoader;
 

@@ -45,7 +45,7 @@ public class SpringRequestHandler implements RequestHandler {
 
     private Map<String, ApsMethodInvoker> methodBeanCache;
 
-    private Set<String> modules=Sets.newHashSet();
+    private Set<String> modules = Sets.newHashSet();
 
     private BeanFactoryReference parentReference;
 
@@ -152,7 +152,11 @@ public class SpringRequestHandler implements RequestHandler {
     @Override
     public void destroy() {
         methodBeanCache.clear();
-        applicationContext.close();
+        try {
+            applicationContext.close();
+        } finally {
+            parentReference.release();
+        }
     }
 
     @Override
@@ -173,7 +177,7 @@ public class SpringRequestHandler implements RequestHandler {
                 invoker.getGenericParameterTypes());
         try {
             Object result = invoker.invoke(convertedParams);
-            response.setResult(objectMapper.convertValue(result,Object.class));
+            response.setResult(objectMapper.convertValue(result, Object.class));
             response.setStatus(ApsStatus.SUCCESS);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

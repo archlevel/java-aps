@@ -22,7 +22,7 @@ import com.anjuke.aps.Response;
  * @author Faye
  *
  */
-class ApsAppContainer implements RequestHandler {
+public class ApsAppContainer implements RequestHandler {
     private static final String HANDLER_KEY = "aps.request.handler";
 
     private static final Logger LOG = LoggerFactory

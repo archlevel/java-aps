@@ -27,7 +27,7 @@ public class ApsAppContainerTest {
         assertTrue(f.exists());
         assertTrue(f.isDirectory());
         ApsAppContainer container = new ApsAppContainer(f.getName(),
-                "META-INF/aps-app.yaml", this.getClass().getClassLoader(), url);
+                "META-INF/aps/aps-app.yaml", this.getClass().getClassLoader(), url);
         container.init();
 
         SimpleRequest request=new SimpleRequest();

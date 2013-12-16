@@ -2,7 +2,9 @@ package com.anjuke.aps.test.parent;
 
 
 public class ParentBean {
-
+    public ParentBean() {
+        System.out.println("============parent create");
+    }
 
     private String name="parent";
 
