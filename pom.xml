@@ -14,8 +14,10 @@
         <developerConnection>scm:git:git@git.corp.anjuke.com:java/site-ajf</developerConnection>
         <url>http://git.corp.anjuke.com/java/site-ajf</url> <tag>HEAD</tag> </scm> -->
     <modules>
+        <module>aps-api</module>
+        <module>aps-test</module>
+        <module>aps-test-support</module>
         <module>aps-core</module>
-        <module>aps-zmq</module>
         <module>aps-client</module>
         <module>aps-server</module>
         <module>aps-spring-api</module>

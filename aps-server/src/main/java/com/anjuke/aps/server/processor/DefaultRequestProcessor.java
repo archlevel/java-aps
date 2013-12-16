@@ -11,9 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anjuke.aps.ApsStatus;
+import com.anjuke.aps.Request;
+import com.anjuke.aps.RequestHandler;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.exception.ApsException;
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
 import com.google.common.collect.Lists;
 
 public class DefaultRequestProcessor implements RequestProcessor {
@@ -74,11 +75,11 @@ public class DefaultRequestProcessor implements RequestProcessor {
     }
 
     @Override
-    public synchronized void destory() {
+    public synchronized void destroy() {
 
         for (RequestHandler handler : handlerList) {
             try {
-                handler.destory();
+                handler.destroy();
             } catch (Exception e) {
                 LOG.warn("Handler " + handler + " destory error", e);
             }

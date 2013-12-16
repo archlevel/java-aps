@@ -11,15 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.message.MessageFilter;
-import com.anjuke.aps.server.processor.RequestHandler;
 
 public class ApsConfig {
     public static final String CONFIG_PATH_KEY = "aps.config.file";
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApsConfig.class);
-    private static final ApsConfig INSTANCE = new ApsConfig();
+    public static final String APS_HOME_PATH_KEY = "aps.home";
 
+    private static final Logger LOG = LoggerFactory.getLogger(ApsConfig.class);
     private final Map<String, Object> confMap = new HashMap<String, Object>();
 
     private ApsConfig() {
@@ -50,7 +50,15 @@ public class ApsConfig {
     }
 
     public static ApsConfig getInstance() {
-        return INSTANCE;
+        return ConfigHolder.config;
+    }
+
+    public static String getApsHome() {
+        String home = System.getenv(APS_HOME_PATH_KEY);
+        if (home == null || "".equals(home)) {
+            return ".";
+        }
+        return home;
     }
 
     public int getPort() {
@@ -69,6 +77,10 @@ public class ApsConfig {
 
     public static void main(String[] args) {
         ApsConfig.getInstance();
+    }
+
+    private static class ConfigHolder {
+        static final ApsConfig config = new ApsConfig();
     }
 
 }

@@ -1,10 +1,10 @@
 package com.anjuke.aps.server.zmq;
 
 import com.anjuke.aps.ApsConfig;
+import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.message.MessageFilter;
 import com.anjuke.aps.server.DefaultMessageHandler;
 import com.anjuke.aps.server.processor.DefaultRequestProcessor;
-import com.anjuke.aps.server.processor.RequestHandler;
 
 public class ApsZMQServerMain {
     public static void main(String[] args) throws InterruptedException {

@@ -18,11 +18,11 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 
 import com.anjuke.aps.LifeCycle;
+import com.anjuke.aps.Request;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.exception.UnknownProtocolException;
 import com.anjuke.aps.message.protocol.Protocol;
 import com.anjuke.aps.message.protocol.ProtocolFactory;
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
 import com.anjuke.aps.message.serializer.Serializer;
 import com.anjuke.aps.util.ApsUtils;
 import com.anjuke.aps.zmq.ZMQPollerRunner;
@@ -89,7 +89,7 @@ public class DefaultRequestProcessor implements ApsRequestProcessor, LifeCycle {
     }
 
     @Override
-    public void destory() {
+    public void destroy() {
         running = false;
         pollerThreadPool.shutdown();
         try {

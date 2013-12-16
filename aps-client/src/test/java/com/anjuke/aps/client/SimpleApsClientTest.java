@@ -1,7 +1,6 @@
 package com.anjuke.aps.client;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.After;
@@ -49,8 +48,8 @@ public class SimpleApsClientTest {
         // for(int i=0;i<100;i++){
         // Future<Object> f= defClient.asyncRequest(".ping", 1000);
         // }
-        // defClient.destory();
+        // defClient.destroy();
 
-        processor.destory();
+        processor.destroy();
     }
 }

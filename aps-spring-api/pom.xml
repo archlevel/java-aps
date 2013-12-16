@@ -5,7 +5,7 @@
     <artifactId>aps-spring-api</artifactId>
     <packaging>jar</packaging>
 
-    <name>ajf-spring-api</name>
+    <name>aps-spring-api</name>
     <parent>
         <groupId>com.anjuke.aps</groupId>
         <artifactId>aps-parent</artifactId>

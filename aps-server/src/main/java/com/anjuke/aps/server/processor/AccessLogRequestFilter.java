@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anjuke.aps.ExtraMessage;
+import com.anjuke.aps.Request;
+import com.anjuke.aps.Response;
 import com.anjuke.aps.message.MessageFilter;
-import com.anjuke.aps.message.protocol.Request;
-import com.anjuke.aps.message.protocol.Response;
 import com.google.common.base.Joiner;
 
 public class AccessLogRequestFilter implements MessageFilter {
@@ -22,7 +22,7 @@ public class AccessLogRequestFilter implements MessageFilter {
     }
 
     @Override
-    public void destory() {
+    public void destroy() {
     }
 
     @Override
