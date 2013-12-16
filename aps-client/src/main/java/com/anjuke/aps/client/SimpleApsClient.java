@@ -19,10 +19,10 @@ public class SimpleApsClient implements ApsClient {
             + ApsUtils.hostname();
     private final Protocol protocol;
 
-    private final ApsRequestProcessor processor;
+    private final ApsClientRequestProcessor processor;
     private final AtomicLong sequence = new AtomicLong();
 
-    public SimpleApsClient(Protocol protocol, ApsRequestProcessor processor) {
+    public SimpleApsClient(Protocol protocol, ApsClientRequestProcessor processor) {
         this.protocol = protocol;
         this.processor = processor;
     }

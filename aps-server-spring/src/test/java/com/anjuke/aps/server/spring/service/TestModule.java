@@ -5,7 +5,7 @@ import java.util.Map;
 import com.anjuke.aps.spring.ApsMethod;
 import com.anjuke.aps.spring.ApsModule;
 
-@ApsModule(name="test")
+@ApsModule(name="javatest")
 public interface TestModule {
 
     @ApsMethod(bean="testService",method="echo")

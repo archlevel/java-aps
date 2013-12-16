@@ -31,10 +31,11 @@ import com.anjuke.aps.zmq.ZMQWorkerSocketPool;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 
-public class DefaultRequestProcessor implements ApsRequestProcessor, LifeCycle {
+public class DefaultClientRequestProcessor implements
+        ApsClientRequestProcessor, LifeCycle {
 
     private static final Logger LOG = LoggerFactory
-            .getLogger(DefaultRequestProcessor.class);
+            .getLogger(DefaultClientRequestProcessor.class);
 
     private static final String ENDPOINT = "inproc://APS_CLIENT_WORKER_POOL";
     private static final int DEFAULT_TIMEOUT = 1000;
@@ -54,7 +55,8 @@ public class DefaultRequestProcessor implements ApsRequestProcessor, LifeCycle {
 
     private volatile boolean running;
 
-    public DefaultRequestProcessor(Serializer serializer, String... endpoints) {
+    public DefaultClientRequestProcessor(Serializer serializer,
+            String... endpoints) {
         this.serializer = serializer;
         this.endpoint = Arrays.asList(endpoints);
     }
@@ -98,13 +100,11 @@ public class DefaultRequestProcessor implements ApsRequestProcessor, LifeCycle {
         }
         pollerThreadPool.shutdownNow();
         threadPool.shutdownNow();
-        try {
-            connectorSocket.close();
-            pool.destory();
-            workerSocket.close();
-        } finally {
-            context.term();
-        }
+
+        connectorSocket.close();
+        pool.destory();
+        workerSocket.close();
+        context.term();
 
     }
 
@@ -126,7 +126,6 @@ public class DefaultRequestProcessor implements ApsRequestProcessor, LifeCycle {
 
         final int timeout = timeoutMilliseconds <= 0 ? DEFAULT_TIMEOUT
                 : timeoutMilliseconds;
-
 
         Callable<Response> callable = new Callable<Response>() {
             @Override

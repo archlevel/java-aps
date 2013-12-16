@@ -26,6 +26,9 @@ public class ZMQServer extends ApsServer {
     private final ExecutorService pollThreadPool = Executors
             .newCachedThreadPool(ApsUtils.threadFactory("ZMQServer-Poller"));
 
+    private final ExecutorService workerThreadPool = Executors
+            .newCachedThreadPool(ApsUtils.threadFactory("ZMQServer-Worker"));
+
     private String hostname = ApsUtils.hostname();
 
     private int port = 9227;
@@ -90,7 +93,7 @@ public class ZMQServer extends ApsServer {
     private void bindSocket() {
         context = ZMQ.context(1);
         serviceSocket = context.socket(ZMQ.ROUTER);
-        String identity ="tcp://"+hostname + ":" + port;
+        String identity = "tcp://" + hostname + ":" + port;
         String endpoint = "tcp://*:" + port;
         serviceSocket.setIdentity(identity.getBytes());
         serviceSocket.setLinger(zmqLinger);
@@ -116,12 +119,29 @@ public class ZMQServer extends ApsServer {
 
     @Override
     protected void doStop() {
+    }
+
+    @Override
+    protected void destroy() {
+        pollThreadPool.shutdown();
         try {
-            pollThreadPool.awaitTermination(1, TimeUnit.MINUTES);
+            pollThreadPool.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
         }
+        workerThreadPool.shutdown();
+        try{
+            workerThreadPool.awaitTermination(30, TimeUnit.SECONDS);
+        }catch(InterruptedException e){
+
+        }
+        pollThreadPool.shutdownNow();
+        workerThreadPool.shutdownNow();
+
+
+        workerSocketPool.destory();
         serviceSocket.close();
         workerSocket.close();
+        context.term();
     }
 
     private class PollerRunner extends ZMQPollerRunner {
@@ -137,9 +157,15 @@ public class ZMQServer extends ApsServer {
 
         @Override
         protected void handlerFrontIn(Socket frontSocket, Socket backendSocket) {
-            Deque<byte[]> frames = ZMQUtils.receiveMessage(frontSocket);
-            messageHandler.handlerMessage(new ZMQMessageChannel(frames,
-                    workerSocketPool));
+            final Deque<byte[]> frames = ZMQUtils.receiveMessage(frontSocket);
+            workerThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    messageHandler.handlerMessage(new ZMQMessageChannel(frames,
+                            workerSocketPool));
+
+                }
+            });
         }
 
         @Override

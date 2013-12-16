@@ -10,7 +10,7 @@ import com.anjuke.aps.message.serializer.Serializer;
 public class ProtocolFactory {
 
     public static final String APS_10_VERSION = "APS10";
-    public static final String APS_12_VERSION = "APS12";
+    public static final String APS_12_VERSION = "APS1.2";
 
     private final static Map<String, Protocol> protocolMapping;
 

@@ -29,6 +29,8 @@ public class DefaultMessageHandler implements MessageHandler {
 
     private final List<MessageFilter> filterList = new ArrayList<MessageFilter>();
 
+
+
     private Serializer serializer = new MessagePackSerializer();
     private RequestProcessor processor;
 
@@ -81,6 +83,7 @@ public class DefaultMessageHandler implements MessageHandler {
 
     @Override
     public void handlerMessage(MessageChannel channel) {
+
         Deque<byte[]> requestFrames = channel.receive();
         Protocol protocol = ProtocolFactory.parseProtocol(requestFrames,
                 serializer);
