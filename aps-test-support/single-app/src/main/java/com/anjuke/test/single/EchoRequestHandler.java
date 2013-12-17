@@ -3,6 +3,7 @@ package com.anjuke.test.single;
 import java.util.Collections;
 import java.util.Set;
 
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.Response;
@@ -31,7 +32,7 @@ public class EchoRequestHandler implements RequestHandler {
     }
 
     @Override
-    public Set<String> getModules() {
+    public Set<ModuleVersion> getModules() {
         return Collections.emptySet();
     }
 

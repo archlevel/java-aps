@@ -2,7 +2,11 @@ package com.anjuke.aps.kiteline;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.anjuke.aps.ApsContext;
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.client.DefaultClientRequestProcessor;
 import com.anjuke.aps.client.SimpleApsClient;
 import com.anjuke.aps.message.protocol.ProtocolFactory;
@@ -10,6 +14,9 @@ import com.anjuke.aps.message.serializer.MessagePackSerializer;
 import com.anjuke.aps.server.ApsServerStatusListener;
 
 public class KiteLineServerStatusListener implements ApsServerStatusListener {
+
+    private static final Logger LOG = LoggerFactory
+            .getLogger(KiteLineServerStatusListener.class);
 
     private DefaultClientRequestProcessor requestProcessor;
     private SimpleApsClient client;
@@ -40,10 +47,15 @@ public class KiteLineServerStatusListener implements ApsServerStatusListener {
 
     @Override
     public void afterStart(ApsContext context) {
-        Set<String> modules = context.getAttribute(ApsContext.LOAD_MODULE_KEY);
+        Set<ModuleVersion> modules = context
+                .getAttribute(ApsContext.LOAD_MODULE_KEY);
         try {
-            for (String module : modules) {
-                Object result=client.request("sp.up", 1000, module, identity, "20134901");
+            for (ModuleVersion module : modules) {
+                Object result = client.request("sp.up", 1000, module.getName(),
+                        identity, module.getVersion());
+                LOG.info(
+                        "send \"sp.up\" for module {}, version {} to kiteline, with response {}",
+                        module.getName(), module.getVersion(), result);
             }
         } catch (Exception e) {
             e.printStackTrace();

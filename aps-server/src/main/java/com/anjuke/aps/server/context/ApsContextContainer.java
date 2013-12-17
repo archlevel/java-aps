@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anjuke.aps.ApsConfig;
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
@@ -39,7 +40,7 @@ public class ApsContextContainer implements RequestHandler {
 
     private List<ApsAppContainer> appContainerList;
 
-    private Set<String> modules = Sets.newHashSet();
+    private Set<ModuleVersion> modules = Sets.newHashSet();
 
     public String getContextLibPath() {
         return contextLibPath;
@@ -155,7 +156,7 @@ public class ApsContextContainer implements RequestHandler {
     }
 
     @Override
-    public Set<String> getModules() {
+    public Set<ModuleVersion> getModules() {
         return modules;
     }
 

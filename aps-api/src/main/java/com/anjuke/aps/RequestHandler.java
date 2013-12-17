@@ -20,7 +20,7 @@ public interface RequestHandler {
      * 没有则返回Collections.emptySet();
      * @return
      */
-    public Set<String> getModules();
+    public Set<ModuleVersion> getModules();
 
 
     public void handle(Request request,Response response);

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.Response;
@@ -93,7 +94,7 @@ public class ApsAppContainer implements RequestHandler {
     }
 
     @Override
-    public Set<String> getModules() {
+    public Set<ModuleVersion> getModules() {
 
         return handler.getModules();
     }

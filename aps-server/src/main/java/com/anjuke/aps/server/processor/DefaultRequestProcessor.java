@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anjuke.aps.ApsContext;
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
@@ -27,7 +28,7 @@ public class DefaultRequestProcessor implements RequestProcessor {
 
     private Map<String, RequestHandler> methodMapping = new HashMap<String, RequestHandler>();
 
-    private Set<String> modules;
+    private Set<ModuleVersion> modules;
 
     public void addHandler(RequestHandler handler) {
         handlerList.add(handler);
@@ -36,7 +37,7 @@ public class DefaultRequestProcessor implements RequestProcessor {
     @Override
     public synchronized void init(ApsContext context) {
 
-        Set<String> moduleSet = Sets.newHashSet();
+        Set<ModuleVersion> moduleSet = Sets.newHashSet();
         for (RequestHandler handler : handlerList) {
             try {
                 handler.init();
@@ -52,7 +53,7 @@ public class DefaultRequestProcessor implements RequestProcessor {
                             + handler);
                 }
             }
-            Set<String> handlerModules = handler.getModules();
+            Set<ModuleVersion> handlerModules = handler.getModules();
 
             if (handlerModules != null) {
                 moduleSet.addAll(handlerModules);
@@ -61,11 +62,17 @@ public class DefaultRequestProcessor implements RequestProcessor {
         modules = Collections.unmodifiableSet(moduleSet);
 
         if (LOG.isInfoEnabled()) {
+            for(ModuleVersion module:modules){
+                LOG.info("registered module {} with version {}",module.getName(),module.getVersion());
+            }
+
             List<String> urlList = Lists.newArrayList(methodMapping.keySet());
             Collections.sort(urlList);
             for (String url : urlList) {
                 LOG.info("registered url " + url);
             }
+
+
         }
 
         context.setAttribute(ApsContext.LOAD_MODULE_KEY, modules);
