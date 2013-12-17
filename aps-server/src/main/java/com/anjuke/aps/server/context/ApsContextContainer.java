@@ -85,6 +85,7 @@ public class ApsContextContainer implements RequestHandler {
             if (urls.length == 0) {
                 continue;
             }
+            LOG.info("Loading {}",appPath.getName());
             ApsAppContainer container = new ApsAppContainer(appPath.getName(),
                     appConfigFilePath, contextClassLoader, urls);
             container.init();
