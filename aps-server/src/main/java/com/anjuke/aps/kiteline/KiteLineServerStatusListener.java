@@ -42,7 +42,6 @@ public class KiteLineServerStatusListener implements ApsServerStatusListener {
                 ProtocolFactory.getProtocol(ProtocolFactory.APS_12_VERSION),
                 requestProcessor);
         identity = context.getAttribute(ApsContext.SERVER_ZMQ_ENDPOINT_KEY);
-        identity = "tcp://" + "192.168.196.119" + ":" + 8964;
     }
 
     @Override
