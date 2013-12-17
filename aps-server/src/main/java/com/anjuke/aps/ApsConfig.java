@@ -13,6 +13,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.message.MessageFilter;
+import com.anjuke.aps.server.ApsServerStatusListener;
 
 public class ApsConfig {
     public static final String CONFIG_PATH_KEY = "aps.config.file";
@@ -73,6 +74,11 @@ public class ApsConfig {
     @SuppressWarnings("unchecked")
     public List<MessageFilter> getMessageFilter() {
         return (List<MessageFilter>) confMap.get("aps.server.message.filter");
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ApsServerStatusListener> getServerStatusListener(){
+        return (List<ApsServerStatusListener>) confMap.get("aps.server.status.listener");
     }
 
     public static void main(String[] args) {

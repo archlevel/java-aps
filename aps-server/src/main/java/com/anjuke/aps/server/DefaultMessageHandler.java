@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.Response;
@@ -28,6 +29,8 @@ public class DefaultMessageHandler implements MessageHandler {
             .getLogger(DefaultMessageHandler.class);
 
     private final List<MessageFilter> filterList = new ArrayList<MessageFilter>();
+
+
 
     private Serializer serializer = new MessagePackSerializer();
     private RequestProcessor processor;
@@ -53,17 +56,17 @@ public class DefaultMessageHandler implements MessageHandler {
     }
 
     @Override
-    public void init() {
+    public void init(ApsContext context) {
         Asserts.notNull(serializer, "Serializer must not be null");
         Asserts.notNull(processor, "Processor must not be null");
         for (MessageFilter filter : filterList) {
             try {
-                filter.init();
+                filter.init(context);
             } catch (Exception e) {
                 throw new ApsException("MessageHandlerFilter init Error", e);
             }
         }
-        processor.init();
+        processor.init(context);
     }
 
     @Override
@@ -81,6 +84,7 @@ public class DefaultMessageHandler implements MessageHandler {
 
     @Override
     public void handlerMessage(MessageChannel channel) {
+
         Deque<byte[]> requestFrames = channel.receive();
         Protocol protocol = ProtocolFactory.parseProtocol(requestFrames,
                 serializer);

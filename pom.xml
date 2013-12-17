@@ -22,6 +22,8 @@
         <module>aps-server</module>
         <module>aps-spring-api</module>
         <module>aps-server-spring</module>
+        <module>aps-server-assembly</module>
+        <module>aps-assembly-descriptor</module>
     </modules>
     <dependencyManagement>
         <dependencies>

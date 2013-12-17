@@ -10,12 +10,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.anjuke.aps.ApsContext;
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.Response;
 import com.anjuke.aps.exception.ApsException;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class DefaultRequestProcessor implements RequestProcessor {
 
@@ -25,13 +28,16 @@ public class DefaultRequestProcessor implements RequestProcessor {
 
     private Map<String, RequestHandler> methodMapping = new HashMap<String, RequestHandler>();
 
+    private Set<ModuleVersion> modules;
 
     public void addHandler(RequestHandler handler) {
         handlerList.add(handler);
     }
 
     @Override
-    public synchronized void init() {
+    public synchronized void init(ApsContext context) {
+
+        Set<ModuleVersion> moduleSet = Sets.newHashSet();
         for (RequestHandler handler : handlerList) {
             try {
                 handler.init();
@@ -47,16 +53,30 @@ public class DefaultRequestProcessor implements RequestProcessor {
                             + handler);
                 }
             }
-        }
+            Set<ModuleVersion> handlerModules = handler.getModules();
 
+            if (handlerModules != null) {
+                moduleSet.addAll(handlerModules);
+            }
+        }
+        modules = Collections.unmodifiableSet(moduleSet);
 
         if (LOG.isInfoEnabled()) {
+            for(ModuleVersion module:modules){
+                LOG.info("registered module {} with version {}",module.getName(),module.getVersion());
+            }
+
             List<String> urlList = Lists.newArrayList(methodMapping.keySet());
             Collections.sort(urlList);
             for (String url : urlList) {
                 LOG.info("registered url " + url);
             }
+
+
         }
+
+        context.setAttribute(ApsContext.LOAD_MODULE_KEY, modules);
+
     }
 
     @Override
@@ -67,7 +87,6 @@ public class DefaultRequestProcessor implements RequestProcessor {
             response.setErrorMessage("Method Not Fount");
             return;
         }
-
 
         handler.handle(request, response);
 

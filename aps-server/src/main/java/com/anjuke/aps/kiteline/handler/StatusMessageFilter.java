@@ -1,5 +1,6 @@
 package com.anjuke.aps.kiteline.handler;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.Response;
@@ -17,7 +18,7 @@ public class StatusMessageFilter implements MessageFilter {
     }
 
     @Override
-    public void init() {
+    public void init(ApsContext context) {
 
     }
 

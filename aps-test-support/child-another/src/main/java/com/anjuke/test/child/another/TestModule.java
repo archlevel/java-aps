@@ -4,7 +4,7 @@ import com.anjuke.aps.spring.ApsMethod;
 import com.anjuke.aps.spring.ApsModule;
 import com.anjuke.aps.test.parent.ParentBean;
 
-@ApsModule(name = "testChildSupport")
+@ApsModule(name = "testChildAnotherSupport")
 public interface TestModule {
 
     @ApsMethod(bean = "childBeanInject", method = "echo")

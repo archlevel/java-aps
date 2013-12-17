@@ -7,8 +7,8 @@ public class ZMQInprocTest {
 
 
         ZMQ.Context context1=ZMQ.context(1);
-        ZMQ.Context context2=ZMQ.context(2);
-//        ZMQ.Context context2=context1;
+//        ZMQ.Context context2=ZMQ.context(1);
+        ZMQ.Context context2=context1;
 
         String ep="inproc://test";
         ZMQ.Socket pull1=context1.socket(ZMQ.PULL);
@@ -20,5 +20,8 @@ public class ZMQInprocTest {
         push2.send("123".getBytes());
         System.out.println("recv");
         System.out.println(new String(pull1.recv()));
+        pull1.close();
+        push2.close();
+        context1.term();
     }
 }

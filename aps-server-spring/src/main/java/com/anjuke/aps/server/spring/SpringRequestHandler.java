@@ -1,7 +1,13 @@
 package com.anjuke.aps.server.spring;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +22,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
 import com.anjuke.aps.ApsStatus;
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.Response;
@@ -35,6 +42,12 @@ public class SpringRequestHandler implements RequestHandler {
 
     private static final Logger LOG = LoggerFactory
             .getLogger(SpringRequestHandler.class);
+
+    private static final String VERSION_PATH = "META-INF/aps/version";
+
+    private static final String DEFAULT_VERSION = new SimpleDateFormat(
+            "yyyyMMdd").format(new Date());
+
     private String contextLocation = "classpath*:applicationContext.xml";
 
     private String parentContextKey;
@@ -45,7 +58,7 @@ public class SpringRequestHandler implements RequestHandler {
 
     private Map<String, ApsMethodInvoker> methodBeanCache;
 
-    private Set<String> modules = Sets.newHashSet();
+    private Set<ModuleVersion> modules = Sets.newHashSet();
 
     private BeanFactoryReference parentReference;
 
@@ -70,6 +83,12 @@ public class SpringRequestHandler implements RequestHandler {
         Asserts.notNull(contextLocation,
                 "Spring context file location not be null");
 
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(
+                DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,
+                false);
+
         if (parentContextKey != null && !parentContextKey.isEmpty()) {
             BeanFactoryLocator locator = ContextSingletonBeanFactoryLocator
                     .getInstance();
@@ -84,11 +103,7 @@ public class SpringRequestHandler implements RequestHandler {
             applicationContext = new ClassPathXmlApplicationContext(
                     contextLocation);
         }
-        objectMapper = new ObjectMapper();
-        objectMapper.configure(
-                DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES,
-                false);
+
         methodBeanCache = Maps.newHashMap();
         Map<String, ApsServiceInstance> instancesMap = applicationContext
                 .getBeansOfType(ApsServiceInstance.class);
@@ -140,8 +155,24 @@ public class SpringRequestHandler implements RequestHandler {
                     throw new ApsException(msg, e);
                 }
             }
-            modules.add(contextName);
+            modules.add(new ModuleVersion(contextName, getVersion()));
         }
+    }
+
+    private String getVersion() {
+        InputStream is = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(VERSION_PATH);
+        if (is == null) {
+            return DEFAULT_VERSION;
+        }
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        try {
+            return br.readLine();
+        } catch (IOException ioe) {
+            LOG.warn("Read version file error", ioe);
+            return DEFAULT_VERSION;
+        }
+
     }
 
     @Override
@@ -160,7 +191,7 @@ public class SpringRequestHandler implements RequestHandler {
     }
 
     @Override
-    public Set<String> getModules() {
+    public Set<ModuleVersion> getModules() {
         return modules;
     }
 

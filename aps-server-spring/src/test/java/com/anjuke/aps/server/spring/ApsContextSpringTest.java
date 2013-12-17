@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.SimpleRequest;
 import com.anjuke.aps.SimpleResponse;
 import com.anjuke.aps.server.context.ApsContextContainer;
@@ -31,7 +32,7 @@ public class ApsContextSpringTest {
         container.setContextLibPath(parentPath);
         container.setAppPathRoot(childPath);
         container.init();
-        assertEquals(Sets.newHashSet("testChildSupport"),
+        assertEquals(Sets.newHashSet(new ModuleVersion("testChildSupport", "beta")),
                 container.getModules());
 
         Set<String> requestMethods = container.getRequestMethods();

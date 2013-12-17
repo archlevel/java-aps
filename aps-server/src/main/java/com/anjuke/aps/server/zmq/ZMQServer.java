@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.message.MessageHandler;
 import com.anjuke.aps.server.ApsServer;
 import com.anjuke.aps.util.ApsUtils;
@@ -25,6 +26,9 @@ public class ZMQServer extends ApsServer {
 
     private final ExecutorService pollThreadPool = Executors
             .newCachedThreadPool(ApsUtils.threadFactory("ZMQServer-Poller"));
+
+    private final ExecutorService workerThreadPool = Executors
+            .newCachedThreadPool(ApsUtils.threadFactory("ZMQServer-Worker"));
 
     private String hostname = ApsUtils.hostname();
 
@@ -43,6 +47,10 @@ public class ZMQServer extends ApsServer {
     private ZMQWorkerSocketPool workerSocketPool;
 
     private MessageHandler messageHandler;
+
+    private String identity ;
+
+    private String endpoint;
 
     public String getHostname() {
         return hostname;
@@ -77,9 +85,13 @@ public class ZMQServer extends ApsServer {
     }
 
     @Override
-    protected void initialize(MessageHandler messageHandler) {
+    protected void initialize(ApsContext context,MessageHandler messageHandler) {
         this.messageHandler = messageHandler;
+        identity= "tcp://" + hostname + ":" + port;
+        endpoint = "tcp://*:" + port;
+        context.setAttribute(ApsContext.SERVER_ZMQ_ENDPOINT_KEY, identity);
     }
+
 
     @Override
     protected void doStart() {
@@ -90,12 +102,10 @@ public class ZMQServer extends ApsServer {
     private void bindSocket() {
         context = ZMQ.context(1);
         serviceSocket = context.socket(ZMQ.ROUTER);
-        String identity ="tcp://"+hostname + ":" + port;
-        String endpoint = "tcp://*:" + port;
         serviceSocket.setIdentity(identity.getBytes());
         serviceSocket.setLinger(zmqLinger);
         serviceSocket.setHWM(zmqHWM);
-        if (serviceSocket.bind("tcp://*:" + port) <= 0) {
+        if (serviceSocket.bind(endpoint) <= 0) {
             serviceSocket.close();
             context.term();
             throw new IllegalStateException("service port binding fail");
@@ -116,12 +126,31 @@ public class ZMQServer extends ApsServer {
 
     @Override
     protected void doStop() {
+        LOG.info("Stopping Aps ZMQ Server");
+    }
+
+    @Override
+    protected void destroy() {
+        pollThreadPool.shutdown();
         try {
-            pollThreadPool.awaitTermination(1, TimeUnit.MINUTES);
+            pollThreadPool.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
         }
+        workerThreadPool.shutdown();
+        try{
+            workerThreadPool.awaitTermination(30, TimeUnit.SECONDS);
+        }catch(InterruptedException e){
+
+        }
+        pollThreadPool.shutdownNow();
+        workerThreadPool.shutdownNow();
+
+
+        workerSocketPool.destory();
         serviceSocket.close();
         workerSocket.close();
+        context.term();
+        LOG.info("Stopped Aps ZMQ Server");
     }
 
     private class PollerRunner extends ZMQPollerRunner {
@@ -137,9 +166,15 @@ public class ZMQServer extends ApsServer {
 
         @Override
         protected void handlerFrontIn(Socket frontSocket, Socket backendSocket) {
-            Deque<byte[]> frames = ZMQUtils.receiveMessage(frontSocket);
-            messageHandler.handlerMessage(new ZMQMessageChannel(frames,
-                    workerSocketPool));
+            final Deque<byte[]> frames = ZMQUtils.receiveMessage(frontSocket);
+            workerThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    messageHandler.handlerMessage(new ZMQMessageChannel(frames,
+                            workerSocketPool));
+
+                }
+            });
         }
 
         @Override
