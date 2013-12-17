@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.message.MessageChannel;
 import com.anjuke.aps.message.MessageHandler;
 
@@ -46,7 +47,7 @@ public class ApsServerTest {
         }
 
         @Override
-        public void init() {
+        public void init(ApsContext context) {
             isInit = true;
         }
 
@@ -66,23 +67,23 @@ public class ApsServerTest {
         }
 
         @Override
-        public void beforeStart() {
+        public void beforeStart(ApsContext context) {
             array.add(beforeStart);
         }
 
         @Override
-        public void afterStart() {
+        public void afterStart(ApsContext context) {
             array.add(afterStart);
 
         }
 
         @Override
-        public void beforeStop() {
+        public void beforeStop(ApsContext context) {
             array.add(beforeShutdown);
         }
 
         @Override
-        public void afterStop() {
+        public void afterStop(ApsContext context) {
             array.add(afterShutdown);
         }
 
@@ -97,7 +98,11 @@ public class ApsServerTest {
         }
 
         @Override
-        protected void initialize(MessageHandler messageHandler) {
+        protected void destroy() {
+
+        }
+        @Override
+        protected void initialize(ApsContext context,MessageHandler messageHandler) {
             array.add(init);
         }
 

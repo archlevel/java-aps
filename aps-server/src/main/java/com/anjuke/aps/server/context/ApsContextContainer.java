@@ -27,7 +27,7 @@ public class ApsContextContainer implements RequestHandler {
     private static final Logger LOG = LoggerFactory
             .getLogger(ApsContextContainer.class);
 
-    private String contextLibPath = ApsConfig.getApsHome() + "/lib";
+    private String contextLibPath = ApsConfig.getApsHome() + "/context";
 
     private String appPathRoot = ApsConfig.getApsHome() + "/temp";
 

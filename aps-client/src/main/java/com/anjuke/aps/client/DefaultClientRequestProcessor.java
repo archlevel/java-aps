@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.LifeCycle;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.Response;
@@ -62,7 +63,7 @@ public class DefaultClientRequestProcessor implements
     }
 
     @Override
-    public void init() {
+    public void init(ApsContext apsContext) {
         running = true;
         context = ZMQ.context(1);
         workerSocket = context.socket(ZMQ.DEALER);

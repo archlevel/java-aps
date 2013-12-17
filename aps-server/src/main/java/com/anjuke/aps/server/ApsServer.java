@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.RunnableComponent;
 import com.anjuke.aps.message.MessageHandler;
 import com.anjuke.aps.util.Asserts;
@@ -18,6 +19,8 @@ public abstract class ApsServer implements RunnableComponent{
             .synchronizedList(new ArrayList<ApsServerStatusListener>());
 
     private MessageHandler messageHandler;
+
+    private final ApsContext context=new ApsContext();
 
     @Override
     public boolean isRunning() {
@@ -36,7 +39,7 @@ public abstract class ApsServer implements RunnableComponent{
         this.messageHandler = messageHandler;
     }
 
-    protected abstract void initialize(MessageHandler messageHandler);
+    protected abstract void initialize(ApsContext context,MessageHandler messageHandler);
 
     protected abstract void doStart();
 
@@ -46,8 +49,8 @@ public abstract class ApsServer implements RunnableComponent{
 
     private void init() {
         Asserts.notNull(messageHandler, "MessageHandler must not be null");
-        messageHandler.init();
-        initialize(messageHandler);
+        messageHandler.init(context);
+        initialize(context,messageHandler);
     }
 
     @Override
@@ -80,25 +83,25 @@ public abstract class ApsServer implements RunnableComponent{
 
     private void callBeforeStartListener() {
         for (ApsServerStatusListener listener : serverStatusListeners) {
-            listener.beforeStart();
+            listener.beforeStart(context);
         }
     }
 
     private void callAfterStartListener() {
         for (ApsServerStatusListener listener : serverStatusListeners) {
-            listener.afterStart();
+            listener.afterStart(context);
         }
     }
 
     private void callBeforeShutdownListener() {
         for (ApsServerStatusListener listener : serverStatusListeners) {
-            listener.beforeStop();
+            listener.beforeStop(context);
         }
     }
 
     private void callAfterShutdownListerner() {
         for (ApsServerStatusListener listener : serverStatusListeners) {
-            listener.afterStop();
+            listener.afterStop(context);
         }
 
     }

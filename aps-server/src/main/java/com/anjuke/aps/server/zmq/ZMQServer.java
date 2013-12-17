@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Socket;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.message.MessageHandler;
 import com.anjuke.aps.server.ApsServer;
 import com.anjuke.aps.util.ApsUtils;
@@ -47,6 +48,10 @@ public class ZMQServer extends ApsServer {
 
     private MessageHandler messageHandler;
 
+    private String identity ;
+
+    private String endpoint;
+
     public String getHostname() {
         return hostname;
     }
@@ -80,9 +85,13 @@ public class ZMQServer extends ApsServer {
     }
 
     @Override
-    protected void initialize(MessageHandler messageHandler) {
+    protected void initialize(ApsContext context,MessageHandler messageHandler) {
         this.messageHandler = messageHandler;
+        identity= "tcp://" + hostname + ":" + port;
+        endpoint = "tcp://*:" + port;
+        context.setAttribute(ApsContext.SERVER_ZMQ_ENDPOINT_KEY, identity);
     }
+
 
     @Override
     protected void doStart() {
@@ -93,12 +102,10 @@ public class ZMQServer extends ApsServer {
     private void bindSocket() {
         context = ZMQ.context(1);
         serviceSocket = context.socket(ZMQ.ROUTER);
-        String identity = "tcp://" + hostname + ":" + port;
-        String endpoint = "tcp://*:" + port;
         serviceSocket.setIdentity(identity.getBytes());
         serviceSocket.setLinger(zmqLinger);
         serviceSocket.setHWM(zmqHWM);
-        if (serviceSocket.bind("tcp://*:" + port) <= 0) {
+        if (serviceSocket.bind(endpoint) <= 0) {
             serviceSocket.close();
             context.term();
             throw new IllegalStateException("service port binding fail");
@@ -119,6 +126,7 @@ public class ZMQServer extends ApsServer {
 
     @Override
     protected void doStop() {
+        LOG.info("Stopping Aps ZMQ Server");
     }
 
     @Override
@@ -142,6 +150,7 @@ public class ZMQServer extends ApsServer {
         serviceSocket.close();
         workerSocket.close();
         context.term();
+        LOG.info("Stopped Aps ZMQ Server");
     }
 
     private class PollerRunner extends ZMQPollerRunner {

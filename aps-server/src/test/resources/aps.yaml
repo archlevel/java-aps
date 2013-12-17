@@ -4,11 +4,15 @@ kiteline:
   - &statusContext !!com.anjuke.aps.kiteline.handler.StatusContext []
   - &statusRequestHandler !!com.anjuke.aps.kiteline.handler.StatusRequestHandler { "context":*statusContext }
   - &statusMessageFilter !!com.anjuke.aps.kiteline.handler.StatusMessageFilter { "context":*statusContext }
+  - &kitelineServerStatusListener !!com.anjuke.aps.kiteline.KiteLineServerStatusListener {
+    "endpoint":"tcp://192.168.1.62:11234"
+  }
 
 aps.zmq.server.port: 8964
 
 
-aps.server.status.listener: []
+aps.server.status.listener:
+  - *kitelineServerStatusListener
 
 
 aps.server.request.handler:
