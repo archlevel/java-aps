@@ -134,7 +134,7 @@ public class SpringRequestHandler implements RequestHandler {
                 Class<?>[] parameterClasses = method.getParameterTypes();
 
                 String targetMethodName = StringUtils.isEmpty(apsMethod
-                        .targetMethodName()) ? method.getName() : apsMethod
+                        .targetMethodName()) ? methodName : apsMethod
                         .targetMethodName();
                 try {
                     Method targetMethod = bean.getClass().getDeclaredMethod(
