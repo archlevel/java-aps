@@ -86,11 +86,6 @@ public class ApsAppContainer implements RequestHandler {
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }
-        try {
-            classloader.close();
-        } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
-        }
     }
 
     @Override
