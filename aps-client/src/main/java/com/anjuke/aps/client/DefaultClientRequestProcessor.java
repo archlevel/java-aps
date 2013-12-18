@@ -3,6 +3,7 @@ package com.anjuke.aps.client;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
@@ -70,9 +71,9 @@ public class DefaultClientRequestProcessor implements
         workerSocket.setLinger(0);
         workerSocket.bind(ENDPOINT);
         connectorSocket = context.socket(ZMQ.DEALER);
-        connectorSocket
-                .setIdentity((ApsUtils.pid() + "@" + ApsUtils.hostname())
-                        .getBytes());
+        connectorSocket.setIdentity((ApsUtils.pid() + "@" + ApsUtils.hostname()
+                + "#" + UUID.randomUUID().toString().substring(0, 8))
+                .getBytes());
         connectorSocket.setLinger(500);
         connectorSocket.setHWM(1000);
         for (String ep : endpoint) {
