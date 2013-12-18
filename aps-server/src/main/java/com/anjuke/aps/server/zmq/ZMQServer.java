@@ -28,7 +28,7 @@ public class ZMQServer extends ApsServer {
             .newCachedThreadPool(ApsUtils.threadFactory("ZMQServer-Poller"));
 
     private final ExecutorService workerThreadPool = Executors
-            .newCachedThreadPool(ApsUtils.threadFactory("ZMQServer-Worker"));
+            .newFixedThreadPool(40,ApsUtils.threadFactory("ZMQServer-Worker"));
 
     private String hostname = ApsUtils.hostname();
 

@@ -133,11 +133,6 @@ public class ApsContextContainer implements RequestHandler {
         for (ApsAppContainer container : appContainerList) {
             container.destroy();
         }
-        try {
-            contextClassLoader.close();
-        } catch (IOException e) {
-            throw new ApsException(e);
-        }
     }
 
     public Set<String> getRequestMethods() {
