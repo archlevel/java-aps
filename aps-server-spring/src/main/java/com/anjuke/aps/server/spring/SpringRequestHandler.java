@@ -124,7 +124,14 @@ public class SpringRequestHandler implements RequestHandler {
                 }
                 String beanName = apsMethod.bean();
                 String methodName = apsMethod.method();
-                String url = contextName + "." + beanName + "." + methodName;
+                
+                StringBuffer url=new StringBuffer();
+                
+                if(StringUtils.hasText(contextName)){
+                	url.append(contextName).append(".");
+                }
+                
+                url.append(beanName).append(".").append(methodName);
 
                 Object bean = applicationContext.getBean(beanName);
                 if (bean == null) {
@@ -139,11 +146,11 @@ public class SpringRequestHandler implements RequestHandler {
                 try {
                     Method targetMethod = bean.getClass().getDeclaredMethod(
                             targetMethodName, parameterClasses);
-                    Object o = methodBeanCache.put(url, new ApsMethodInvoker(
+                    Object o = methodBeanCache.put(url.toString(), new ApsMethodInvoker(
                             bean, targetMethod, method));
                     if (o != null) {
                         throw new IllegalStateException(
-                                "duplicate aps url regestered: " + url);
+                                "duplicate aps url regestered: " + url.toString());
                     }
                 } catch (SecurityException e) {
                     LOG.error(e.getMessage(), e);
