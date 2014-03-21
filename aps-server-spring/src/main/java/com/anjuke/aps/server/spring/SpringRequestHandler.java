@@ -116,6 +116,12 @@ public class SpringRequestHandler implements RequestHandler {
                 continue;
             }
             String contextName = moduleAnnotation.name();
+            
+            if(!StringUtils.hasText(contextName)){
+            	LOG.warn(clazz + " not contextName by @ApsModule, register skip");
+                continue;
+            }
+            
             Method[] methodArray = clazz.getDeclaredMethods();
             for (Method method : methodArray) {
                 ApsMethod apsMethod = method.getAnnotation(ApsMethod.class);
@@ -125,13 +131,7 @@ public class SpringRequestHandler implements RequestHandler {
                 String beanName = apsMethod.bean();
                 String methodName = apsMethod.method();
                 
-                StringBuffer url=new StringBuffer();
-                
-                if(StringUtils.hasText(contextName)){
-                	url.append(contextName).append(".");
-                }
-                
-                url.append(beanName).append(".").append(methodName);
+                String url = contextName + "." + beanName + "." + methodName;
 
                 Object bean = applicationContext.getBean(beanName);
                 if (bean == null) {
@@ -146,11 +146,11 @@ public class SpringRequestHandler implements RequestHandler {
                 try {
                     Method targetMethod = bean.getClass().getDeclaredMethod(
                             targetMethodName, parameterClasses);
-                    Object o = methodBeanCache.put(url.toString(), new ApsMethodInvoker(
+                    Object o = methodBeanCache.put(url, new ApsMethodInvoker(
                             bean, targetMethod, method));
                     if (o != null) {
                         throw new IllegalStateException(
-                                "duplicate aps url regestered: " + url.toString());
+                                "duplicate aps url regestered: " + url);
                     }
                 } catch (SecurityException e) {
                     LOG.error(e.getMessage(), e);
