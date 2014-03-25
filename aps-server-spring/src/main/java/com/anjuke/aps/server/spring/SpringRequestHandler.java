@@ -116,12 +116,12 @@ public class SpringRequestHandler implements RequestHandler {
                 continue;
             }
             String contextName = moduleAnnotation.name();
-            
+
             if(!StringUtils.hasText(contextName)){
-            	LOG.warn(clazz + " not contextName by @ApsModule, register skip");
+                LOG.warn(clazz + " not contextName by @ApsModule, register skip");
                 continue;
             }
-            
+
             Method[] methodArray = clazz.getDeclaredMethods();
             for (Method method : methodArray) {
                 ApsMethod apsMethod = method.getAnnotation(ApsMethod.class);
@@ -130,8 +130,6 @@ public class SpringRequestHandler implements RequestHandler {
                 }
                 String beanName = apsMethod.bean();
                 String methodName = apsMethod.method();
-                
-                String url = contextName + "." + beanName + "." + methodName;
 
                 Object bean = applicationContext.getBean(beanName);
                 if (bean == null) {
@@ -146,11 +144,18 @@ public class SpringRequestHandler implements RequestHandler {
                 try {
                     Method targetMethod = bean.getClass().getDeclaredMethod(
                             targetMethodName, parameterClasses);
-                    Object o = methodBeanCache.put(url, new ApsMethodInvoker(
-                            bean, targetMethod, method));
-                    if (o != null) {
+                    ApsMethodInvoker apsMethodInvoker = new ApsMethodInvoker(bean, targetMethod, method);
+                    String urlByComma = contextName + "." + beanName + "." + methodName;
+                    Object comma = methodBeanCache.put(urlByComma, apsMethodInvoker);
+                    if (comma != null) {
                         throw new IllegalStateException(
-                                "duplicate aps url regestered: " + url);
+                                "duplicate aps url regestered: " + urlByComma);
+                    }
+                    String urlByColon = ":" + contextName + ":" + beanName + "." + methodName;
+                    Object colon = methodBeanCache.put(urlByColon, apsMethodInvoker);
+                    if (colon != null) {
+                        throw new IllegalStateException(
+                                "duplicate aps url regestered: " + urlByColon);
                     }
                 } catch (SecurityException e) {
                     LOG.error(e.getMessage(), e);

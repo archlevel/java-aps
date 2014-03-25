@@ -36,36 +36,36 @@ public class ApsContextSpringTest {
                 container.getModules());
 
         Set<String> requestMethods = container.getRequestMethods();
-        assertEquals(4, requestMethods.size());
+        assertEquals(8, requestMethods.size());
         assertTrue(requestMethods
-                .contains("testChildSupport.childBeanInject.echo"));
+                .contains(":testChildSupport:childBeanInject.echo"));
         assertTrue(requestMethods
-                .contains("testChildSupport.childBeanInject.parentBean"));
+                .contains(":testChildSupport:childBeanInject.parentBean"));
         assertTrue(requestMethods
-                .contains("testChildSupport.childBeanXmlConf.echo"));
+                .contains(":testChildSupport:childBeanXmlConf.echo"));
         assertTrue(requestMethods
-                .contains("testChildSupport.childBeanXmlConf.parentBean"));
+                .contains(":testChildSupport:childBeanXmlConf.parentBean"));
 
         SimpleRequest request = new SimpleRequest();
         SimpleResponse response = new SimpleResponse();
         String msg = "test echo message";
         request.setRequestParams(Arrays.<Object> asList(msg));
 
-        request.setRequestMethod("testChildSupport.childBeanInject.echo");
+        request.setRequestMethod(":testChildSupport:childBeanInject.echo");
         container.handle(request, response);
         assertEquals(msg, response.getResult());
 
-        request.setRequestMethod("testChildSupport.childBeanXmlConf.echo");
+        request.setRequestMethod(":testChildSupport:childBeanXmlConf.echo");
         container.handle(request, response);
         assertEquals(msg, response.getResult());
 
         request.setRequestParams(Collections.emptyList());
 
-        request.setRequestMethod("testChildSupport.childBeanInject.parentBean");
+        request.setRequestMethod(":testChildSupport:childBeanInject.parentBean");
         container.handle(request, response);
         assertEquals(ImmutableMap.of("name", "parent"), response.getResult());
 
-        request.setRequestMethod("testChildSupport.childBeanXmlConf.parentBean");
+        request.setRequestMethod(":testChildSupport:childBeanXmlConf.parentBean");
         container.handle(request, response);
         assertEquals(ImmutableMap.of("name", "parent"), response.getResult());
 
