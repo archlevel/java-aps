@@ -1,7 +1,6 @@
 package com.anjuke.aps.server.context;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -14,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anjuke.aps.ApsConfig;
-import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.ApsStatus;
+import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.Response;

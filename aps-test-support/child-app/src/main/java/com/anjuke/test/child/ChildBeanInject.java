@@ -19,10 +19,6 @@ public class ChildBeanInject implements InitializingBean{
         return msg;
     }
 
-    public String ingore(String msg){
-        return msg;
-    }
-
     public ParentBean parentBean(){
         return parent;
     }
