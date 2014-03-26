@@ -36,11 +36,11 @@ public class ApsContextSpringTest {
                 container.getModules());
 
         Set<String> requestMethods = container.getRequestMethods();
-        assertEquals(10, requestMethods.size());
+        assertEquals(12, requestMethods.size());
         assertTrue(requestMethods
                 .contains(":testChildSupport:childBeanInject.echo"));
         assertTrue(requestMethods
-                .contains(":testChildSupport:echo"));
+                .contains(":testChildSupport:ingore"));
         assertTrue(requestMethods
                 .contains(":testChildSupport:childBeanInject.parentBean"));
         assertTrue(requestMethods
@@ -57,7 +57,7 @@ public class ApsContextSpringTest {
         container.handle(request, response);
         assertEquals(msg, response.getResult());
 
-        request.setRequestMethod(":testChildSupport:echo");
+        request.setRequestMethod(":testChildSupport:ingore");
         container.handle(request, response);
         assertEquals(msg, response.getResult());
 

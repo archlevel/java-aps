@@ -117,8 +117,9 @@ public class SpringRequestHandler implements RequestHandler {
             }
             String contextName = moduleAnnotation.name();
 
-            if(!StringUtils.hasText(contextName)){
-                LOG.warn(clazz + " not contextName by @ApsModule, register skip");
+            if (!StringUtils.hasText(contextName)) {
+                LOG.warn(clazz
+                        + " not contextName by @ApsModule, register skip");
                 continue;
             }
 
@@ -145,28 +146,24 @@ public class SpringRequestHandler implements RequestHandler {
                 try {
                     Method targetMethod = bean.getClass().getDeclaredMethod(
                             targetMethodName, parameterClasses);
-                    ApsMethodInvoker apsMethodInvoker = new ApsMethodInvoker(bean, targetMethod, method);
+                    ApsMethodInvoker apsMethodInvoker = new ApsMethodInvoker(
+                            bean, targetMethod, method);
 
-                    String urlByComma = null;
-                    String urlByColon = null;
                     if (ignoreBeanName) {
-                        urlByComma = contextName + "." + methodName;
-                        urlByColon = ":" + contextName + ":" + methodName;
-                    } else {
-                        urlByComma = contextName + "." + beanName + "." + methodName;
-                        urlByColon = ":" + contextName + ":" + beanName + "." + methodName;
+                        String ignoreUrlByComma = contextName + "."
+                                + methodName;
+                        putMethodBeanCache(ignoreUrlByComma, apsMethodInvoker);
+                        String ignoreUrlByColon = ":" + contextName + ":"
+                                + methodName;
+                        putMethodBeanCache(ignoreUrlByColon, apsMethodInvoker);
                     }
 
-                    Object comma = methodBeanCache.put(urlByComma, apsMethodInvoker);
-                    if (comma != null) {
-                        throw new IllegalStateException(
-                                "duplicate aps url regestered: " + urlByComma);
-                    }
-                    Object colon = methodBeanCache.put(urlByColon, apsMethodInvoker);
-                    if (colon != null) {
-                        throw new IllegalStateException(
-                                "duplicate aps url regestered: " + urlByColon);
-                    }
+                    String urlByComma = contextName + "." + beanName + "."
+                            + methodName;
+                    putMethodBeanCache(urlByComma, apsMethodInvoker);
+                    String urlByColon = ":" + contextName + ":" + beanName
+                            + "." + methodName;
+                    putMethodBeanCache(urlByColon, apsMethodInvoker);
                 } catch (SecurityException e) {
                     LOG.error(e.getMessage(), e);
                     throw e;
@@ -178,6 +175,14 @@ public class SpringRequestHandler implements RequestHandler {
                 }
             }
             modules.add(new ModuleVersion(contextName, getVersion()));
+        }
+    }
+
+    public void putMethodBeanCache(String url, ApsMethodInvoker apsMethodInvoker) {
+        Object o = methodBeanCache.put(url, apsMethodInvoker);
+        if (o != null) {
+            throw new IllegalStateException("duplicate aps url regestered: "
+                    + url);
         }
     }
 
