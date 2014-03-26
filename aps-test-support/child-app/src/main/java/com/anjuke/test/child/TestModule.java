@@ -10,6 +10,9 @@ public interface TestModule {
     @ApsMethod(bean = "childBeanInject", method = "echo")
     public String echo(String message);
 
+    @ApsMethod(bean = "childBeanInject", ingoreBeanName = true,method = "ingore")
+    public String ingore(String msg);
+
     @ApsMethod(bean = "childBeanInject", method = "parentBean")
     public ParentBean parentBean();
 
@@ -18,4 +21,5 @@ public interface TestModule {
 
     @ApsMethod(bean = "childBeanXmlConf", method = "parentBean",targetMethodName="parentBean")
     public ParentBean bbb();
+
 }

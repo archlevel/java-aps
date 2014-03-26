@@ -141,17 +141,27 @@ public class SpringRequestHandler implements RequestHandler {
                 String targetMethodName = StringUtils.isEmpty(apsMethod
                         .targetMethodName()) ? methodName : apsMethod
                         .targetMethodName();
+                boolean ignoreBeanName = apsMethod.ingoreBeanName();
                 try {
                     Method targetMethod = bean.getClass().getDeclaredMethod(
                             targetMethodName, parameterClasses);
                     ApsMethodInvoker apsMethodInvoker = new ApsMethodInvoker(bean, targetMethod, method);
-                    String urlByComma = contextName + "." + beanName + "." + methodName;
+
+                    String urlByComma = null;
+                    String urlByColon = null;
+                    if (ignoreBeanName) {
+                        urlByComma = contextName + "." + methodName;
+                        urlByColon = ":" + contextName + ":" + methodName;
+                    } else {
+                        urlByComma = contextName + "." + beanName + "." + methodName;
+                        urlByColon = ":" + contextName + ":" + beanName + "." + methodName;
+                    }
+
                     Object comma = methodBeanCache.put(urlByComma, apsMethodInvoker);
                     if (comma != null) {
                         throw new IllegalStateException(
                                 "duplicate aps url regestered: " + urlByComma);
                     }
-                    String urlByColon = ":" + contextName + ":" + beanName + "." + methodName;
                     Object colon = methodBeanCache.put(urlByColon, apsMethodInvoker);
                     if (colon != null) {
                         throw new IllegalStateException(
