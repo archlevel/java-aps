@@ -15,6 +15,11 @@ public @interface ApsMethod {
     String bean();
 
     /**
+     * 忽略Spring里的beanName
+     */
+    boolean ingoreBeanName() default false;
+
+    /**
      * 对外服务的方法名
      */
     String method();

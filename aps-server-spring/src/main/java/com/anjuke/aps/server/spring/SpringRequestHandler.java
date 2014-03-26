@@ -116,12 +116,13 @@ public class SpringRequestHandler implements RequestHandler {
                 continue;
             }
             String contextName = moduleAnnotation.name();
-            
-            if(!StringUtils.hasText(contextName)){
-            	LOG.warn(clazz + " not contextName by @ApsModule, register skip");
+
+            if (!StringUtils.hasText(contextName)) {
+                LOG.warn(clazz
+                        + " not contextName by @ApsModule, register skip");
                 continue;
             }
-            
+
             Method[] methodArray = clazz.getDeclaredMethods();
             for (Method method : methodArray) {
                 ApsMethod apsMethod = method.getAnnotation(ApsMethod.class);
@@ -130,8 +131,6 @@ public class SpringRequestHandler implements RequestHandler {
                 }
                 String beanName = apsMethod.bean();
                 String methodName = apsMethod.method();
-                
-                String url = contextName + "." + beanName + "." + methodName;
 
                 Object bean = applicationContext.getBean(beanName);
                 if (bean == null) {
@@ -143,15 +142,28 @@ public class SpringRequestHandler implements RequestHandler {
                 String targetMethodName = StringUtils.isEmpty(apsMethod
                         .targetMethodName()) ? methodName : apsMethod
                         .targetMethodName();
+                boolean ignoreBeanName = apsMethod.ingoreBeanName();
                 try {
                     Method targetMethod = bean.getClass().getDeclaredMethod(
                             targetMethodName, parameterClasses);
-                    Object o = methodBeanCache.put(url, new ApsMethodInvoker(
-                            bean, targetMethod, method));
-                    if (o != null) {
-                        throw new IllegalStateException(
-                                "duplicate aps url regestered: " + url);
+                    ApsMethodInvoker apsMethodInvoker = new ApsMethodInvoker(
+                            bean, targetMethod, method);
+
+                    if (ignoreBeanName) {
+                        String ignoreUrlByComma = contextName + "."
+                                + methodName;
+                        putMethodBeanCache(ignoreUrlByComma, apsMethodInvoker);
+                        String ignoreUrlByColon = ":" + contextName + ":"
+                                + methodName;
+                        putMethodBeanCache(ignoreUrlByColon, apsMethodInvoker);
                     }
+
+                    String urlByComma = contextName + "." + beanName + "."
+                            + methodName;
+                    putMethodBeanCache(urlByComma, apsMethodInvoker);
+                    String urlByColon = ":" + contextName + ":" + beanName
+                            + "." + methodName;
+                    putMethodBeanCache(urlByColon, apsMethodInvoker);
                 } catch (SecurityException e) {
                     LOG.error(e.getMessage(), e);
                     throw e;
@@ -163,6 +175,14 @@ public class SpringRequestHandler implements RequestHandler {
                 }
             }
             modules.add(new ModuleVersion(contextName, getVersion()));
+        }
+    }
+
+    public void putMethodBeanCache(String url, ApsMethodInvoker apsMethodInvoker) {
+        Object o = methodBeanCache.put(url, apsMethodInvoker);
+        if (o != null) {
+            throw new IllegalStateException("duplicate aps url regestered: "
+                    + url);
         }
     }
 
