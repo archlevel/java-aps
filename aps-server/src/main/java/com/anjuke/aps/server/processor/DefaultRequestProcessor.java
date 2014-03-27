@@ -38,9 +38,12 @@ public class DefaultRequestProcessor implements RequestProcessor {
     public synchronized void init(ApsContext context) {
 
         Set<ModuleVersion> moduleSet = Sets.newHashSet();
+        context.setAttribute(ApsContext.LOAD_MODULE_KEY, moduleSet);
+
+
         for (RequestHandler handler : handlerList) {
             try {
-                handler.init();
+                handler.init(context);
             } catch (Exception e) {
                 throw new ApsException("RequestHandler init Error", e);
             }
@@ -59,10 +62,9 @@ public class DefaultRequestProcessor implements RequestProcessor {
                 moduleSet.addAll(handlerModules);
             }
         }
-        modules = Collections.unmodifiableSet(moduleSet);
 
         if (LOG.isInfoEnabled()) {
-            for(ModuleVersion module:modules){
+            for(ModuleVersion module:moduleSet){
                 LOG.info("registered module {} with version {}",module.getName(),module.getVersion());
             }
 
@@ -72,10 +74,9 @@ public class DefaultRequestProcessor implements RequestProcessor {
                 LOG.info("registered url " + url);
             }
 
-
         }
 
-        context.setAttribute(ApsContext.LOAD_MODULE_KEY, modules);
+
 
     }
 
@@ -94,11 +95,11 @@ public class DefaultRequestProcessor implements RequestProcessor {
     }
 
     @Override
-    public synchronized void destroy() {
+    public synchronized void destroy(ApsContext context) {
 
         for (RequestHandler handler : handlerList) {
             try {
-                handler.destroy();
+                handler.destroy(context);
             } catch (Exception e) {
                 LOG.warn("Handler " + handler + " destory error", e);
             }

@@ -34,6 +34,6 @@ public class SimpleApsClientTest {
         // }
         // defClient.destroy();
 
-        processor.destroy();
+        processor.destroy(null);
     }
 }

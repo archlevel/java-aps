@@ -23,7 +23,7 @@ public class StatusMessageFilter implements MessageFilter {
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext context) {
 
     }
 

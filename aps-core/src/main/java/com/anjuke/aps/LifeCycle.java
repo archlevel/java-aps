@@ -4,5 +4,5 @@ public interface LifeCycle {
 
     public void init(ApsContext context);
 
-    public void destroy();
+    public void destroy(ApsContext context);
 }

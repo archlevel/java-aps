@@ -76,7 +76,7 @@ public abstract class ApsServer implements RunnableComponent{
         running = false;
         doStop();
         callAfterShutdownListerner();
-        messageHandler.destroy();
+        messageHandler.destroy(context);
         destroy();
         shutdownLatch.countDown();
     }

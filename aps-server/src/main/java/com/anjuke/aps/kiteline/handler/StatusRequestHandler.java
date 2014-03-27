@@ -4,15 +4,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
 import com.anjuke.aps.Response;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public class StatusRequestHandler implements RequestHandler {
     private StatusContext context;
+    private Set<String> urlSet=Sets.newHashSet();
 
     public StatusContext getContext() {
         return context;
@@ -23,12 +26,16 @@ public class StatusRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void init() {
-
+    public void init(ApsContext context) {
+         urlSet.add(".status");
+         Set<ModuleVersion> set=context.getAttribute(ApsContext.LOAD_MODULE_KEY);
+         for(ModuleVersion mv:set){
+             urlSet.add(":"+mv.getName()+":.status");
+         }
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext context) {
 
     }
 
@@ -39,7 +46,7 @@ public class StatusRequestHandler implements RequestHandler {
 
     @Override
     public Set<String> getRequestMethods() {
-        return ImmutableSet.of(".status");
+        return Collections.unmodifiableSet(urlSet);
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.SimpleRequest;
 import com.anjuke.aps.SimpleResponse;
 
@@ -28,7 +29,8 @@ public class ApsAppContainerTest {
         assertTrue(f.isDirectory());
         ApsAppContainer container = new ApsAppContainer(f.getName(),
                 "META-INF/aps/aps-app.yaml", this.getClass().getClassLoader(), url);
-        container.init();
+        ApsContext context=new ApsContext();
+        container.init(context);
 
         SimpleRequest request=new SimpleRequest();
         SimpleResponse response=new SimpleResponse();
@@ -38,7 +40,7 @@ public class ApsAppContainerTest {
         Object result=response.getResult();
         assertEquals(data,result);
 
-        container.destroy();
+        container.destroy(context);
 
         System.out.println(container);
     }
