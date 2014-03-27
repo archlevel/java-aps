@@ -57,7 +57,7 @@ public class KiteLineServerStatusListener implements ApsServerStatusListener {
                         module.getName(), module.getVersion(), result);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -67,14 +67,14 @@ public class KiteLineServerStatusListener implements ApsServerStatusListener {
             client.request("sp.down", 1000, identity);
             Thread.sleep(1000);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn(e.getMessage(), e);
         }
 
     }
 
     @Override
     public void afterStop(ApsContext context) {
-        requestProcessor.destroy();
+        requestProcessor.destroy(context);
 
     }
 

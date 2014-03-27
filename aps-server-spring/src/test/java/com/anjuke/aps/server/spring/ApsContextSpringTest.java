@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.SimpleRequest;
 import com.anjuke.aps.SimpleResponse;
@@ -31,11 +32,14 @@ public class ApsContextSpringTest {
         ApsContextContainer container = new ApsContextContainer();
         container.setContextLibPath(parentPath);
         container.setAppPathRoot(childPath);
-        container.init();
+        ApsContext context=new ApsContext();
+        container.init(context);
+        Set<String> requestMethods = container.getRequestMethods();
+        System.out.println(requestMethods);
         assertEquals(Sets.newHashSet(new ModuleVersion("testChildSupport", "beta")),
                 container.getModules());
 
-        Set<String> requestMethods = container.getRequestMethods();
+
         assertEquals(12, requestMethods.size());
         assertTrue(requestMethods
                 .contains(":testChildSupport:childBeanInject.echo"));
@@ -75,7 +79,7 @@ public class ApsContextSpringTest {
         container.handle(request, response);
         assertEquals(ImmutableMap.of("name", "parent"), response.getResult());
 
-        container.destroy();
+        container.destroy(context);
 
     }
 }

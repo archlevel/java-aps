@@ -52,7 +52,7 @@ public class ApsServerTest {
         }
 
         @Override
-        public void destroy() {
+        public void destroy(ApsContext context) {
             isDestory = true;
         }
 

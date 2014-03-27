@@ -23,7 +23,7 @@ public class AccessLogRequestFilter implements MessageFilter {
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext context) {
     }
 
     @Override

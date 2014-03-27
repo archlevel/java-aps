@@ -12,12 +12,11 @@ aps.server.status.listener: []
 
 
 aps.server.request.handler:
-  - *pingRequestHandler
-  - *statusRequestHandler
   - !!com.anjuke.aps.server.spring.SpringRequestHandler {
     "contextLocation":"classpath*:testApplicationContext.xml"
   }
-
+  - *pingRequestHandler
+  - *statusRequestHandler
 
 aps.server.message.filter:
   - !!com.anjuke.aps.server.processor.AccessLogRequestFilter []

@@ -93,7 +93,7 @@ public class DefaultClientRequestProcessor implements
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext apsContext) {
         running = false;
         pollerThreadPool.shutdown();
         try {

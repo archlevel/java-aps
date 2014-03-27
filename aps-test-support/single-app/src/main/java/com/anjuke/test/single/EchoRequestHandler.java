@@ -3,6 +3,7 @@ package com.anjuke.test.single;
 import java.util.Collections;
 import java.util.Set;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
@@ -12,12 +13,12 @@ import com.google.common.collect.Sets;
 public class EchoRequestHandler implements RequestHandler {
 
     @Override
-    public void init() {
+    public void init(ApsContext context) {
 
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext context) {
 
     }
 

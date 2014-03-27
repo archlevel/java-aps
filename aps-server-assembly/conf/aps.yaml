@@ -16,9 +16,9 @@ aps.server.status.listener:
 
 
 aps.server.request.handler:
+  - !!com.anjuke.aps.server.context.ApsContextContainer {}
   - *pingRequestHandler
   - *statusRequestHandler
-  - !!com.anjuke.aps.server.context.ApsContextContainer {}
 
 aps.server.message.filter:
   - !!com.anjuke.aps.server.processor.AccessLogRequestFilter []

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
@@ -42,7 +43,7 @@ public class ApsAppContainer implements RequestHandler {
     }
 
     @Override
-    public void init() {
+    public void init(ApsContext context) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classloader);
         try {
@@ -54,7 +55,7 @@ public class ApsAppContainer implements RequestHandler {
                     .load(configStream);
             handler = (RequestHandler) map.get(HANDLER_KEY);
 
-            handler.init();
+            handler.init(context);
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }
@@ -77,11 +78,11 @@ public class ApsAppContainer implements RequestHandler {
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext context) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classloader);
         try {
-            handler.destroy();
+            handler.destroy(context);
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }

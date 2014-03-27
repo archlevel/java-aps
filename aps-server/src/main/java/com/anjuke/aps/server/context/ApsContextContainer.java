@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anjuke.aps.ApsConfig;
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
@@ -58,18 +59,19 @@ public class ApsContextContainer implements RequestHandler {
     }
 
     @Override
-    public void init() {
+    public void init(ApsContext context) {
         try {
             contextClassLoader = new URLClassLoader(
                     getLibPathUrl(contextLibPath),
                     ApsContextContainer.class.getClassLoader());
-            initAppContainer();
+            initAppContainer(context);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Lib path init error", e);
         }
     }
 
-    private void initAppContainer() throws MalformedURLException {
+    private void initAppContainer(ApsContext context)
+            throws MalformedURLException {
         File appRootFile = new File(appPathRoot);
         if (appRootFile.isFile()) {
             throw new IllegalStateException(
@@ -85,10 +87,10 @@ public class ApsContextContainer implements RequestHandler {
             if (urls.length == 0) {
                 continue;
             }
-            LOG.info("Loading {}",appPath.getName());
+            LOG.info("Loading {}", appPath.getName());
             ApsAppContainer container = new ApsAppContainer(appPath.getName(),
                     appConfigFilePath, contextClassLoader, urls);
-            container.init();
+            container.init(context);
 
             appContainerList.add(container);
             for (String method : container.getRequestMethods()) {
@@ -100,6 +102,11 @@ public class ApsContextContainer implements RequestHandler {
                 }
             }
             modules.addAll(container.getModules());
+        }
+        Set<ModuleVersion> contextModules = context
+                .getAttribute(ApsContext.LOAD_MODULE_KEY);
+        if (contextModules != null) {
+            contextModules.addAll(modules);
         }
 
     }
@@ -128,9 +135,9 @@ public class ApsContextContainer implements RequestHandler {
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext context) {
         for (ApsAppContainer container : appContainerList) {
-            container.destroy();
+            container.destroy(context);
         }
     }
 

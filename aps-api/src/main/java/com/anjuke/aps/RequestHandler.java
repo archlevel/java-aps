@@ -4,9 +4,9 @@ import java.util.Set;
 
 public interface RequestHandler {
 
-    public void init();
+    public void init(ApsContext context);
 
-    public void destroy();
+    public void destroy(ApsContext context);
 
     /**
      * 会在init()之后调用该方法

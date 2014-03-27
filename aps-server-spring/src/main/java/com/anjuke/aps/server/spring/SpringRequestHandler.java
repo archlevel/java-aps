@@ -21,6 +21,7 @@ import org.springframework.context.access.ContextSingletonBeanFactoryLocator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ApsStatus;
 import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
@@ -79,7 +80,7 @@ public class SpringRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void init() {
+    public void init(ApsContext context) {
         Asserts.notNull(contextLocation,
                 "Spring context file location not be null");
 
@@ -208,7 +209,7 @@ public class SpringRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void destroy() {
+    public void destroy(ApsContext context) {
         methodBeanCache.clear();
         try {
             applicationContext.close();

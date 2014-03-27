@@ -10,11 +10,13 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.server.context.ApsAppContainer;
 import com.anjuke.aps.server.context.ApsContextContainer;
 import com.google.common.collect.Lists;
 
 public class MultiChildContextTest {
+    ApsContext context=new ApsContext();
 
     private ApsAppContainer createContainer(String project, ClassLoader parent)
             throws Exception {
@@ -23,7 +25,7 @@ public class MultiChildContextTest {
         ApsAppContainer container = new ApsAppContainer(project,
                 "META-INF/aps/aps-app.yaml", parent, getJarURL(userdir
                         + "/../aps-test-support/" + project + "/target/"));
-        container.init();
+        container.init(context);
         return container;
     }
 
@@ -55,8 +57,8 @@ public class MultiChildContextTest {
         ApsAppContainer childAnother = createContainer("child-another",
                 parentCL);
 
-        child.destroy();
-        childAnother.destroy();
+        child.destroy(context);
+        childAnother.destroy(context);
 
     }
 }

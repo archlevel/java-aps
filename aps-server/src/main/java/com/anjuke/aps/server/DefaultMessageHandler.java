@@ -70,11 +70,11 @@ public class DefaultMessageHandler implements MessageHandler {
     }
 
     @Override
-    public void destroy() {
-        processor.destroy();
+    public void destroy(ApsContext context) {
+        processor.destroy(context);
         for (MessageFilter filter : filterList) {
             try {
-                filter.destroy();
+                filter.destroy(context);
             } catch (Exception e) {
                 LOG.warn("Filter " + filter + " destory error", e);
             }
