@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import com.anjuke.aps.ApsContext;
 import com.anjuke.aps.ApsStatus;
+import com.anjuke.aps.ExceptionHandler;
 import com.anjuke.aps.ModuleVersion;
 import com.anjuke.aps.Request;
 import com.anjuke.aps.RequestHandler;
@@ -63,6 +64,10 @@ public class SpringRequestHandler implements RequestHandler {
 
     private BeanFactoryReference parentReference;
 
+    private ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
+
+    private String exceptionHandlerBeanName;
+
     public String getParentContextKey() {
         return parentContextKey;
     }
@@ -77,6 +82,22 @@ public class SpringRequestHandler implements RequestHandler {
 
     public void setContextLocation(String contextLocation) {
         this.contextLocation = contextLocation;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
+
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
+    }
+
+    public String getExceptionHandlerBeanName() {
+        return exceptionHandlerBeanName;
+    }
+
+    public void setExceptionHandlerBeanName(String exceptionHandlerBeanName) {
+        this.exceptionHandlerBeanName = exceptionHandlerBeanName;
     }
 
     @Override
@@ -108,6 +129,11 @@ public class SpringRequestHandler implements RequestHandler {
         methodBeanCache = Maps.newHashMap();
         Map<String, ApsServiceInstance> instancesMap = applicationContext
                 .getBeansOfType(ApsServiceInstance.class);
+
+        if (exceptionHandlerBeanName != null) {
+            this.exceptionHandler = applicationContext.getBean(
+                    exceptionHandlerBeanName, ExceptionHandler.class);
+        }
 
         for (ApsServiceInstance instance : instancesMap.values()) {
             Class<?> clazz = instance.getServiceClass();
@@ -239,9 +265,7 @@ public class SpringRequestHandler implements RequestHandler {
             response.setResult(objectMapper.convertValue(result, Object.class));
             response.setStatus(ApsStatus.SUCCESS);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            response.setErrorMessage(e.getMessage());
-            response.setStatus(ApsStatus.INTENAL_SERVER_ERROR);
+            exceptionHandler.handleException(e, request, response);
         }
 
     };

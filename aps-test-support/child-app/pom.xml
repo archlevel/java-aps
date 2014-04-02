@@ -16,6 +16,12 @@
         </dependency>
         <dependency>
             <groupId>com.anjuke.aps</groupId>
+            <artifactId>aps-api</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.anjuke.aps</groupId>
             <artifactId>aps-spring-api</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>provided</scope>

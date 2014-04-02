@@ -26,4 +26,8 @@ public class ChildBeanInject implements InitializingBean{
     public ParentBean parentBean(){
         return parent;
     }
+
+    public void throwException(){
+        throw new RuntimeException();
+    }
 }
