@@ -16,6 +16,9 @@ public interface TestModule {
     @ApsMethod(bean = "childBeanInject", method = "parentBean")
     public ParentBean parentBean();
 
+    @ApsMethod(bean = "childBeanInject", method = "throwException")
+    public void throwException();
+
     @ApsMethod(bean = "childBeanXmlConf", method = "echo",targetMethodName="echo")
     public String aaa(String message);
 

@@ -1,6 +1,7 @@
 
 aps.request.handler: !!com.anjuke.aps.server.spring.SpringRequestHandler {
     "contextLocation":"classpath:META-INF/aps/apsSpringContext.xml",
-    "parentContextKey":"parentContext"
+    "parentContextKey":"parentContext",
+    "exceptionHandlerBeanName":"testExceptionHandler"
   }
 

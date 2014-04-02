@@ -40,7 +40,7 @@ public class ApsContextSpringTest {
                 container.getModules());
 
 
-        assertEquals(12, requestMethods.size());
+        assertEquals(14, requestMethods.size());
         assertTrue(requestMethods
                 .contains(":testChildSupport:childBeanInject.echo"));
         assertTrue(requestMethods
@@ -78,6 +78,15 @@ public class ApsContextSpringTest {
         request.setRequestMethod(":testChildSupport:childBeanXmlConf.parentBean");
         container.handle(request, response);
         assertEquals(ImmutableMap.of("name", "parent"), response.getResult());
+
+
+        request.setRequestMethod(":testChildSupport:childBeanInject.throwException");
+        container.handle(request, response);
+        assertEquals(9999,response.getStatus());
+        assertEquals(Integer.MAX_VALUE,response.getResult());
+        System.out.println(response.getErrorMessage().getClass());
+        assertEquals("[TestExceptionHandler]",response.getErrorMessage());
+
 
         container.destroy(context);
 
